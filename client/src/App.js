@@ -1,73 +1,60 @@
-import React, { Component } from "react";
-import SimpleStorageContract from "./contracts/SimpleStorage.json";
-import getWeb3 from "./getWeb3";
+import React, { useState } from "react";
+import "bootstrap/dist/css/bootstrap.min.css";
+import Button from "react-bootstrap/Button";
+import { ethers } from "ethers";
 
 import "./App.css";
 
-class App extends Component {
-  state = { storageValue: 0, web3: null, accounts: null, contract: null };
+import Paris from "./data/Paris.json";
+import Grid from "./components/Grid";
+import User from "./components/User/User";
 
-  componentDidMount = async () => {
-    try {
-      // Get network provider and web3 instance.
-      const web3 = await getWeb3();
+function App() {
+  const [visual, setVisual] = useState(<div>Property visual</div>);
+  const [info, setInfo] = useState(<div>Property details</div>);
 
-      // Use web3 to get the user's accounts.
-      const accounts = await web3.eth.getAccounts();
+  const [address, setAddress] = useState("");
+  const [provider, setProvider] = useState(null);
 
-      // Get the contract instance.
-      const networkId = await web3.eth.net.getId();
-      const deployedNetwork = SimpleStorageContract.networks[networkId];
-      const instance = new web3.eth.Contract(
-        SimpleStorageContract.abi,
-        deployedNetwork && deployedNetwork.address,
-      );
-
-      // Set web3, accounts, and contract to the state, and then proceed with an
-      // example of interacting with the contract's methods.
-      this.setState({ web3, accounts, contract: instance }, this.runExample);
-    } catch (error) {
-      // Catch any errors for any of the above operations.
-      alert(
-        `Failed to load web3, accounts, or contract. Check console for details.`,
-      );
-      console.error(error);
+  async function connectWallet() {
+    if (typeof window.ethereum !== "undefined") {
+      if (window.ethereum.isMetaMask) {
+        await window.ethereum.request({ method: "eth_requestAccounts" });
+        let p = new ethers.providers.Web3Provider(window.ethereum);
+        console.log(p);
+        window.ethereum.on("accountsChanged", (accounts) => {
+          setAddress(accounts[0]);
+        });
+        setAddress(window.ethereum.selectedAddress);
+        setProvider(p);
+      }
     }
-  };
-
-  runExample = async () => {
-    const { accounts, contract } = this.state;
-
-    // Stores a given value, 5 by default.
-    await contract.methods.set(5).send({ from: accounts[0] });
-
-    // Get the value from the contract to prove it worked.
-    const response = await contract.methods.get().call();
-
-    // Update state with the result.
-    this.setState({ storageValue: response });
-  };
-
-  render() {
-    if (!this.state.web3) {
-      return <div>Loading Web3, accounts, and contract...</div>;
-    }
-    return (
-      <div className="App">
-        <h1>Good to Go!</h1>
-        <p>Your Truffle Box is installed and ready.</p>
-        <h2>Smart Contract Example</h2>
-        <p>
-          If your contracts compiled and migrated successfully, below will show
-          a stored value of 5 (by default).
-        </p>
-        <p>
-          Try changing the value stored on <strong>line 42</strong> of App.js.
-        </p>
-        <div>The stored value is: {this.state.storageValue}</div>
-      </div>
-    );
   }
+
+  function displayInfo(cellID) {
+    setVisual(<img className="land" src={Paris[cellID].visual} />);
+    setInfo(<div>{Paris[cellID].name}</div>);
+  }
+
+  return (
+    <div className="App">
+      <div className="info-area-1">
+        <User eth_address={address} eth_provider={provider} connect={connectWallet} />
+      </div>
+      <div className="info-area-2">
+        <h2>Visual</h2>
+        {visual}
+      </div>
+      <div className="info-area-3">Miscelaneous</div>
+      <div className="info-area-4">
+        <h2>Details</h2>
+        {info}
+      </div>
+      <div className="main-area">
+        <Grid data={Paris} displayInfo={displayInfo} />
+      </div>
+    </div>
+  );
 }
 
 export default App;
