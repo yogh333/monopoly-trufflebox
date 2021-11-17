@@ -7,7 +7,7 @@
   */
 
   display: grid;
-  grid-template-columns: 1fr 900px 1fr;
+  grid-template-columns: 1fr 730px 1fr;
   grid-template-rows: 363px 363px;
 }
 

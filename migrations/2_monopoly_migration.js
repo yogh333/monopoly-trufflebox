@@ -3,7 +3,7 @@ const MonopolyProp = artifacts.require("MonopolyProp");
 const MonopolyBuild = artifacts.require("MonopolyBuild");
 const MonopolyBank = artifacts.require("MonopolyBank");
 
-module.exports = async function (deployer) {
+module.exports = async function (deployer, network, accounts) {
   await deployer.deploy(MonopolyMono, web3.utils.toWei("15000", "ether"));
   await deployer.deploy(
     MonopolyProp,
@@ -22,5 +22,10 @@ module.exports = async function (deployer) {
     MonopolyPropInstance.address,
     MonopolyBuildInstance.address,
     MonopolyMonoInstance.address
+  );
+
+  await MonopolyMonoInstance.mint(
+    accounts[1],
+    web3.utils.toWei("1000", "ether")
   );
 };

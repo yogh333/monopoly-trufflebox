@@ -1,43 +1,46 @@
-import React, { useState } from "react";
-import "bootstrap/dist/css/bootstrap.min.css";
-import Button from "react-bootstrap/Button";
+import { useState, useEffect } from "react";
 import { ethers } from "ethers";
+
+import MonoJson from "../../contracts/MonopolyMono.json";
+import BankJson from "../../contracts/MonopolyBank.json";
+import PropJson from "../../contracts/MonopolyProp.json";
+import BuildJson from "../../contracts/MonopolyBuild.json";
 
 import "./User.css";
 
 export default function User(props) {
-  async function getBlockchainInfo() {
-    console.log("toto");
-    let provider = props.eth_provider;
-    let balance = await provider.getBalance(props.eth_address);
-    console.log(balance.toString());
-    let signer = provider.getSigner();
-    console.log(await signer.getAddress());
-    console.log(await provider.getNetwork());
-  }
+  const provider = props.eth_provider;
+  const address = props.eth_address;
 
-  if (props.eth_provider == null) {
-    return (
-      <div>
-        <h2>User Info</h2>
-        <Button variant="info" size="sm" onClick={props.connect}>
-          Connect Wallet
-        </Button>
-      </div>
+  const [balance, setBalance] = useState("?");
+  const [prop, setProp] = useState(0);
+
+  const MonoSC = new ethers.Contract(
+    MonoJson.networks[123456789].address,
+    MonoJson.abi,
+    provider.getSigner()
+  );
+
+  const PropSC = new ethers.Contract(
+    PropJson.networks[123456789].address,
+    PropJson.abi,
+    provider.getSigner()
+  );
+
+  useEffect(() => {
+    MonoSC.balanceOf(address).then((value) =>
+      setBalance(ethers.utils.formatUnits(value))
     );
-  } else {
-    var provider = props.eth_provider;
-    return (
-      <div>
-        <h2>User Info</h2>
-        <Button variant="success" size="sm" onClick={props.connect} disabled>
-          Connected
-        </Button>
-        <div className="address">{props.eth_address}</div>
-        <Button variant="secondary" size="sm" onClick={getBlockchainInfo}>
-          TEST
-        </Button>
-      </div>
-    );
-  }
+  });
+
+  useEffect(() => {
+    PropSC.balanceOf(address).then((value) => setProp(value.toNumber()));
+  });
+
+  return (
+    <div>
+      <div>{balance} MONO$</div>
+      <div>{prop} PROP$</div>
+    </div>
+  );
 }
