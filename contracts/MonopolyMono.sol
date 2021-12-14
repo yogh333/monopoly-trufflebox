@@ -31,17 +31,17 @@ contract MonopolyMono is
     }
 
     function mint(address account, uint256 amount)
-        public
+        external
         onlyRole(MINTER_ROLE)
     {
         _mint(account, amount);
     }
 
-    function pause() public onlyRole(ADMIN_ROLE) {
+    function pause() external onlyRole(ADMIN_ROLE) {
         super._pause();
     }
 
-    function unpause() public onlyRole(ADMIN_ROLE) {
+    function unpause() external onlyRole(ADMIN_ROLE) {
         super._unpause();
     }
 
