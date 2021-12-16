@@ -11,19 +11,18 @@ import "./User.css";
 export default function User(props) {
   const provider = props.eth_provider;
   const address = props.eth_address;
-  const networkId = props.network_id
 
   const [balance, setBalance] = useState("?");
   const [prop, setProp] = useState(0);
 
   const MonoSC = new ethers.Contract(
-    MonoJson.networks[networkId].address,
+    MonoJson.networks[123456789].address,
     MonoJson.abi,
     provider.getSigner()
   );
 
   const PropSC = new ethers.Contract(
-    PropJson.networks[networkId].address,
+    PropJson.networks[123456789].address,
     PropJson.abi,
     provider.getSigner()
   );

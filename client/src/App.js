@@ -15,7 +15,6 @@ import BankJson from "./contracts/MonopolyBank.json";
 function App() {
   const [visual, setVisual] = useState(<div>Property visual</div>);
   const [provider, setProvider] = useState(null);
-  const [networkId, setNetworkId] = useState(null);
   const [connect, setConnect] = useState(
     <Button variant="info" size="sm" onClick={connectWallet}>
       Connect
@@ -43,12 +42,8 @@ function App() {
             </Button>
           );
         });
-
-        const network = await p.getNetwork()
-        setNetworkId(network.chainId)
-
         let bank = new ethers.Contract(
-          BankJson.networks[network.chainId].address,
+          BankJson.networks[123456789].address,
           BankJson.abi,
           p.getSigner()
         );
@@ -97,7 +92,7 @@ function App() {
       <div className="info-area-1">
         <h2>User info</h2>
         {connect}
-        {provider && <User eth_provider={provider} eth_address={address} network_id={networkId} />}
+        {provider && <User eth_provider={provider} eth_address={address} />}
       </div>
       <div className="info-area-2">
         <h2>Property Visual</h2>
@@ -108,7 +103,7 @@ function App() {
       </div>
       <div className="info-area-4">
         <h2>Property Info</h2>
-        {provider && <Land eth_provider={provider} land_info={landinfo} network_id={networkId} />}
+        {provider && <Land eth_provider={provider} land_info={landinfo} />}
       </div>
       <div className="main-area">
         <Grid data={Paris} displayInfo={displayInfo} />
