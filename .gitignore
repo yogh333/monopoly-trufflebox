@@ -1,2 +1,7 @@
-build/
-client/src/contracts/
+build
+client/src/contracts
+
+node_modules
+
+#ide
+.idea
