@@ -4,27 +4,43 @@ pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/access/AccessControl.sol";
 
+import "./MonopolyPawn.sol";
+
 contract MonopolyBoard is AccessControl {
 	bytes32 public constant ADMIN_ROLE = keccak256("ADMIN_ROLE");
 
 	event eNewBoard(uint16 indexed new_edition_nb);
+
+	struct Player {
+		uint8 position;
+		uint8 dices;
+		uint256 pawnID;
+	}
 
 	struct Board {
 		uint8 nbOfLands;
 		uint8 rarityLevel;
 		mapping(uint8 => bool) isBuildingLand;
 		uint8 buildType;
+		mapping(address => Player) players;
+		uint16 nb_players_max;
+		uint16 nb_players;
 	}
 
 	uint16 private editionMax;
 
 	mapping(uint16 => Board) private boards;
 
-	constructor() {
+	MonopolyPawn immutable pawn;
+
+	constructor(address pawn_address) {
+		require(pawn_address != address(0));
+
 		_setupRole(ADMIN_ROLE, msg.sender);
 		_setRoleAdmin(ADMIN_ROLE, ADMIN_ROLE);
 
 		editionMax = 0;
+		pawn = MonopolyPawn(pawn_address);
 
 		Board storage b = boards[0];
 		b.nbOfLands = 40;
@@ -97,5 +113,35 @@ contract MonopolyBoard is AccessControl {
 		b.buildType = _buildType;
 
 		emit eNewBoard(editionMax);
+	}
+
+	function register(
+		uint16 _edition,
+		address _player,
+		uint256 _pawnID
+	) external onlyRole(ADMIN_ROLE) {
+		require(_edition <= editionMax, "Unknown edition");
+		require(boards[_edition].players[_player].pawnID == 0, "player already registered");
+		require(pawn.ownerOf(_pawnID) == _player, "player shall own a pawn");
+		require(boards[_edition].nb_players + 1 < boards[_edition].nb_players_max, "game is full");
+
+		boards[_edition].players[_player].pawnID = _pawnID;
+		boards[_edition].nb_players += 1;
+
+		// emit event new player
+		//emit ePlayer(_player, _edition);
+	}
+
+	function play(uint16 _edition) external {
+		require(boards[_edition].players[msg.sender].pawnID != 0, "Unregistered player");
+
+		// roll dices (randomly)
+		boards[_edition].players[msg.sender].dices = 4;
+
+		// update player's position (modulo boards[edition].nbOfLands)
+		boards[_edition].players[msg.sender].position += 4 % boards[_edition].nbOfLands;
+
+		// emit event with player's new position
+		//emit ePosition(msg.sender, _edition, board[edition].players[msg.sender].position);
 	}
 }

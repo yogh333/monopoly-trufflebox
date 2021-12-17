@@ -1,3 +1,4 @@
+const MonopolyPawn = artifacts.require("MonopolyPawn");
 const MonopolyMono = artifacts.require("MonopolyMono");
 const MonopolyBoard = artifacts.require("MonopolyBoard");
 const MonopolyProp = artifacts.require("MonopolyProp");
@@ -8,7 +9,15 @@ module.exports = async function (deployer, network, accounts) {
   await deployer.deploy(MonopolyMono, web3.utils.toWei("15000", "ether"));
   const MonopolyMonoInstance = await MonopolyMono.deployed();
 
-  await deployer.deploy(MonopolyBoard);
+  await deployer.deploy(
+    MonopolyPawn,
+    "Monopoly World Pawns",
+    "MWPa",
+    "http://token-cdn-uri/"
+  );
+  const MonopolyPawnInstance = await MonopolyPawn.deployed();
+
+  await deployer.deploy(MonopolyBoard, MonopolyPawnInstance.address);
   const MonopolyBoardInstance = await MonopolyBoard.deployed();
 
   await deployer.deploy(
