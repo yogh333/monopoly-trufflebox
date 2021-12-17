@@ -21,17 +21,19 @@ function Game(props) {
 
   function retrieveProvider() {
     if (window.ethereum) {
-      return new ethers.providers.Web3Provider(window.ethereum)
+      return new ethers.providers.Web3Provider(window.ethereum);
     }
   }
 
-  const provider = retrieveProvider()
+  const provider = retrieveProvider();
 
-  const bankSC = useState(new ethers.Contract(
+  //console.log(props.network_id);
+
+  const bankSC = new ethers.Contract(
     BankJson.networks[props.network_id].address,
     BankJson.abi,
     provider
-  ))
+  );
 
   async function displayInfo(cellID) {
     setVisual(<img className="land" src={Paris[cellID].visual} />);
@@ -65,7 +67,13 @@ function Game(props) {
     <div className="Game">
       <div className="info-area-1">
         <h2>User info</h2>
-        { provider && <User provider={provider} address={props.address} network_id={props.network_id} />}
+        {provider && (
+          <User
+            provider={provider}
+            address={props.address}
+            network_id={props.network_id}
+          />
+        )}
       </div>
       <div className="info-area-2">
         <h2>Property Visual</h2>
@@ -76,7 +84,7 @@ function Game(props) {
       </div>
       <div className="info-area-4">
         <h2>Property Info</h2>
-        { <Land land_info={landInfo} />}
+        {<Land land_info={landInfo} />}
       </div>
       <div className="main-area">
         <Grid data={Paris} displayInfo={displayInfo} />
