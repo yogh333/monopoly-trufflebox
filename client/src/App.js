@@ -21,6 +21,7 @@ function App() {
     </Button>
   );
   const [address, setAddress] = useState("");
+  const [networkId, setNetworkId] = useState(null);
   const [landinfo, setLandInfo] = useState({
     title: "undefined",
     prices: { rare: "0", uncommon: "0", common: "0" },
@@ -43,7 +44,7 @@ function App() {
           );
         });
         let bank = new ethers.Contract(
-          BankJson.networks[123456789].address,
+          BankJson.networks[window.ethereum.networkVersion].address,
           BankJson.abi,
           p.getSigner()
         );
@@ -55,6 +56,7 @@ function App() {
         );
         setAddress(window.ethereum.selectedAddress);
         setProvider(p);
+        setNetworkId(window.ethereum.networkVersion)
       }
     }
   }
@@ -92,7 +94,7 @@ function App() {
       <div className="info-area-1">
         <h2>User info</h2>
         {connect}
-        {provider && <User eth_provider={provider} eth_address={address} />}
+        {provider && networkId && <User eth_provider={provider} eth_address={address} eth_network_id={networkId} />}
       </div>
       <div className="info-area-2">
         <h2>Property Visual</h2>
@@ -103,7 +105,7 @@ function App() {
       </div>
       <div className="info-area-4">
         <h2>Property Info</h2>
-        {provider && <Land eth_provider={provider} land_info={landinfo} />}
+        {provider && networkId && <Land eth_provider={provider} land_info={landinfo} eth_network_id={networkId} />}
       </div>
       <div className="main-area">
         <Grid data={Paris} displayInfo={displayInfo} />
