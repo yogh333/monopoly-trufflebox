@@ -9,9 +9,9 @@ import BuildJson from "../../contracts/MonopolyBuild.json";
 import "./User.css";
 
 export default function User(props) {
-  const provider = props.eth_provider;
-  const address = props.eth_address;
-  const networkId = props.eth_network_id;
+  const provider = props.provider;
+  const address = props.address;
+  const networkId = props.network_id;
 
   const [balance, setBalance] = useState("?");
   const [prop, setProp] = useState(0);
@@ -19,13 +19,13 @@ export default function User(props) {
   const MonoSC = new ethers.Contract(
     MonoJson.networks[networkId].address,
     MonoJson.abi,
-    provider.getSigner()
+    provider
   );
 
   const PropSC = new ethers.Contract(
     PropJson.networks[networkId].address,
     PropJson.abi,
-    provider.getSigner()
+    provider
   );
 
   useEffect(() => {

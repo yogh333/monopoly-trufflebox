@@ -1,117 +1,115 @@
-import { useState, useEffect } from "react";
-import "bootstrap/dist/css/bootstrap.min.css";
-import Button from "react-bootstrap/Button";
-import { ethers } from "ethers";
+import { useState, useEffect } from "react"
+import { BrowserRouter, Route, Routes } from 'react-router-dom'
+import "bootstrap/dist/css/bootstrap.min.css"
+import Button from "react-bootstrap/Button"
+import Container from "react-bootstrap/Container"
+import Nav from "react-bootstrap/Nav"
+import Navbar from "react-bootstrap/Navbar"
 
-import "./App.css";
+//import Admin from "./components/Game/Admin";
+import Game from "./components/Game/Game";
+import Home from "./components/Home/Home";
 
-import Paris from "./data/Paris.json";
-import Grid from "./components/Grid";
-import User from "./components/User/User";
-import Land from "./components/Land/Land";
-
-import BankJson from "./contracts/MonopolyBank.json";
+import "./App.css"
 
 function App() {
-  const [visual, setVisual] = useState(<div>Property visual</div>);
-  const [provider, setProvider] = useState(null);
-  const [connect, setConnect] = useState(
-    <Button variant="info" size="sm" onClick={connectWallet}>
-      Connect
-    </Button>
-  );
-  const [address, setAddress] = useState("");
-  const [networkId, setNetworkId] = useState(null);
-  const [landinfo, setLandInfo] = useState({
-    title: "undefined",
-    prices: { rare: "0", uncommon: "0", common: "0" },
-    bprices: { house: "0", hotel: "0" },
-  });
+  const [networkId, setNetworkId] = useState(window.ethereum && window.ethereum.networkVersion)
+  const [address, setAddress] = useState(window.ethereum && window.ethereum.selectedAddress)
 
-  const [bankSC, setBankSC] = useState(null);
+  let isSubscriptionToEthereumEventsDone = false
+
+  const subscribeEthereumEvents = () => {
+    if (isSubscriptionToEthereumEventsDone) {
+      return
+    }
+
+    isSubscriptionToEthereumEventsDone = true
+
+    window.ethereum.on('accountsChanged', accounts => {
+      setAddress(accounts[0])
+      console.log(`Accounts updated: ${accounts}`)
+    })
+
+    window.ethereum.on('chainChanged', networkId => {
+      console.log(`Network updated: ${networkId}`)
+      window.location.reload()
+    })
+  }
+
+  useEffect(() => {
+    subscribeEthereumEvents()
+  })
 
   async function connectWallet() {
+    if (address) {
+      return
+    }
+
     if (typeof window.ethereum !== "undefined") {
       if (window.ethereum.isMetaMask) {
+
         await window.ethereum.request({ method: "eth_requestAccounts" });
-        let p = await new ethers.providers.Web3Provider(window.ethereum);
-        window.ethereum.on("accountsChanged", (accounts) => {
-          setAddress(accounts[0]);
-          setConnect(
-            <Button variant="success" size="sm" disabled>
-              {window.ethereum.selectedAddress}
-            </Button>
-          );
-        });
-        let bank = new ethers.Contract(
-          BankJson.networks[window.ethereum.networkVersion].address,
-          BankJson.abi,
-          p.getSigner()
-        );
-        setBankSC(bank);
-        setConnect(
-          <Button variant="success" size="sm" disabled>
-            {window.ethereum.selectedAddress}
-          </Button>
-        );
-        setAddress(window.ethereum.selectedAddress);
-        setProvider(p);
+
         setNetworkId(window.ethereum.networkVersion)
+        // address is setted with ethereum event
       }
     }
   }
 
-  async function displayInfo(cellID) {
-    setVisual(<img className="land" src={Paris[cellID].visual} />);
-    if (bankSC != null) {
-      console.log("get prices !");
-      let prop_prices = [];
-      for (let i = 0; i < 3; i++) {
-        prop_prices[i] = await bankSC.getPriceOfProp(0, cellID, i);
-      }
-      let build_prices = [];
-      for (let i = 0; i < 2; i++) {
-        build_prices[i] = await bankSC.getPriceOfBuild(0, cellID, i);
-      }
-      let land = {
-        title: Paris[cellID].name,
-        prices: {
-          rare: ethers.utils.formatUnits(prop_prices[0]),
-          uncommon: ethers.utils.formatUnits(prop_prices[1]),
-          common: ethers.utils.formatUnits(prop_prices[2]),
-        },
-        bprices: {
-          house: ethers.utils.formatUnits(build_prices[0]),
-          hotel: ethers.utils.formatUnits(build_prices[1]),
-        },
-      };
-      setLandInfo(land);
+  function renderOthersLinks() {
+    if (!address) {
+      return null
     }
+
+    return (<>
+      <Nav.Link href="/game">Game</Nav.Link>
+      <Nav.Link href="/staking">Staking</Nav.Link>
+    </>)
   }
+
+  const ellipsis = (string) => { return string.substring(0, 5) + '...' + string.slice(-3) }
 
   return (
     <div className="App">
-      <div className="info-area-1">
-        <h2>User info</h2>
-        {connect}
-        {provider && networkId && <User eth_provider={provider} eth_address={address} eth_network_id={networkId} />}
-      </div>
-      <div className="info-area-2">
-        <h2>Property Visual</h2>
-        {visual}
-      </div>
-      <div className="info-area-3">
-        <h2>Misc</h2>
-      </div>
-      <div className="info-area-4">
-        <h2>Property Info</h2>
-        {provider && networkId && <Land eth_provider={provider} land_info={landinfo} eth_network_id={networkId} />}
-      </div>
-      <div className="main-area">
-        <Grid data={Paris} displayInfo={displayInfo} />
-      </div>
+      <BrowserRouter>
+        <Navbar className="px-3" bg="light">
+          <Container>
+            <Navbar.Brand className="brand">
+              Monopoly World
+            </Navbar.Brand>
+            <Nav className="me-auto">
+              <Nav.Link href="/">Home</Nav.Link>
+              { renderOthersLinks() }
+            </Nav>
+            <Navbar.Collapse className="justify-content-end">
+              <Navbar.Text>
+                <Button className="mx-3" variant="outline-primary" onClick={ connectWallet }>
+                  { address ? ellipsis(address) : 'Connect' }
+                </Button>
+              </Navbar.Text>
+            </Navbar.Collapse>
+          </Container>
+        </Navbar>
+
+        <Routes>
+          <Route exact path='/' element={
+            <Home
+              network_id = { networkId }
+              address = { address }
+            />
+          } />
+          <Route exact path='/admin/' />
+          <Route exact path='/game' element={
+            <Game
+              network_id = { networkId }
+              address = { address }
+            />
+          } />
+          <Route exact path='/staking' element={<Home />} />
+        </Routes>
+      </BrowserRouter>
     </div>
-  );
+  )
 }
 
-export default App;
+export default App

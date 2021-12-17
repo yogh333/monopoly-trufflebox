@@ -6,7 +6,6 @@ import BuildJson from "../../contracts/MonopolyBuild.json";
 import BankJson from "../../contracts/MonopolyBank.json";
 
 export default function Land(props) {
-  const provider = props.eth_provider;
   const landInfo = props.land_info;
 
   return (
