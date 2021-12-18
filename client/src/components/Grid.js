@@ -11,47 +11,25 @@ export default function Grid(props) {
 
   props.data.forEach((element, index) => {
     let id = "cell-" + index;
-    if (index >= 0 && index <= 10) {
-      elements.push(
-        /*<img
-          src={element.visual}
-          id={id}
-          className="cell bottom-line"
-          onClick={handleClick}
-        />*/
-        <div id={id} className="cell bottom-line" onClick={handleClick}></div>
-      );
-    } else if (index >= 11 && index <= 19) {
-      elements.push(
-        /*<img
-          src={element.visual}
-          id={id}
-          className="cell left-line"
-          onClick={handleClick}
-        />*/
-        <div id={id} className="cell left-line" onClick={handleClick}></div>
-      );
+    let position = "bottom"
+
+    if (index >= 11 && index <= 19) {
+      position = "left"
     } else if (index >= 20 && index <= 30) {
-      elements.push(
-        /*<img
-          src={element.visual}
-          id={id}
-          className="cell top-line"
-          onClick={handleClick}
-        />*/
-        <div id={id} className="cell top-line" onClick={handleClick}></div>
-      );
-    } else {
-      elements.push(
-        /*<img
-          src={element.visual}
-          id={id}
-          className="cell right-line"
-          onClick={handleClick}
-        />*/
-        <div id={id} className="cell right-line" onClick={handleClick}></div>
-      );
+      position = "top"
+    } else if (index > 30){
+      position = "right"
     }
+
+    elements.push(
+      /*<img
+        src={element.visual}
+        id={id}
+        className={`cell ${position}-line`}
+        onClick={handleClick}
+      />*/
+      <div id={id} key={id} className={`cell ${position}-line`} onClick={handleClick}></div>
+    );
   });
 
   return <div className="board">{elements}</div>;

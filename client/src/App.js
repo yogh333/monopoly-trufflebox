@@ -11,20 +11,14 @@ import Game from "./components/Game/Game";
 import Home from "./components/Home/Home";
 
 import "./App.css"
+import {ethers} from "ethers";
 
 function App() {
+  const [provider, setProvider] = useState(null)
   const [networkId, setNetworkId] = useState(window.ethereum && window.ethereum.networkVersion)
   const [address, setAddress] = useState(window.ethereum && window.ethereum.selectedAddress)
 
-  let isSubscriptionToEthereumEventsDone = false
-
   const subscribeEthereumEvents = () => {
-    if (isSubscriptionToEthereumEventsDone) {
-      return
-    }
-
-    isSubscriptionToEthereumEventsDone = true
-
     window.ethereum.on('accountsChanged', accounts => {
       setAddress(accounts[0])
       console.log(`Accounts updated: ${accounts}`)
@@ -36,9 +30,20 @@ function App() {
     })
   }
 
+  function getProvider() {
+    if (window.ethereum) {
+      return new ethers.providers.Web3Provider(window.ethereum)
+    }
+  }
+
   useEffect(() => {
     subscribeEthereumEvents()
-  })
+    setProvider(getProvider())
+  }, [])
+
+  useEffect(() => {
+    setProvider(getProvider())
+  }, [networkId, address])
 
   async function connectWallet() {
     if (address) {
@@ -51,7 +56,7 @@ function App() {
         await window.ethereum.request({ method: "eth_requestAccounts" });
 
         setNetworkId(window.ethereum.networkVersion)
-        // address is setted with ethereum event
+        // address is set by ethereum event
       }
     }
   }
@@ -94,6 +99,7 @@ function App() {
         <Routes>
           <Route exact path='/' element={
             <Home
+              provider = { provider }
               network_id = { networkId }
               address = { address }
             />
@@ -101,11 +107,18 @@ function App() {
           <Route exact path='/admin/' />
           <Route exact path='/game' element={
             <Game
+              provider = { provider }
               network_id = { networkId }
               address = { address }
             />
           } />
-          <Route exact path='/staking' element={<Home />} />
+          <Route exact path='/staking' element={
+            <Home
+              provider = { provider }
+              network_id = { networkId }
+              address = { address }
+            />
+          } />
         </Routes>
       </BrowserRouter>
     </div>

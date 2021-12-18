@@ -12,6 +12,10 @@ import Land from "../Land/Land";
 import BankJson from "../../contracts/MonopolyBank.json";
 
 function Game(props) {
+  const provider = props.provider
+  const networkId = props.network_id
+  const address = props.address
+
   const [visual, setVisual] = useState(<div>Property visual</div>);
   const [landInfo, setLandInfo] = useState({
     title: "undefined",
@@ -19,18 +23,8 @@ function Game(props) {
     bprices: { house: "0", hotel: "0" },
   });
 
-  function retrieveProvider() {
-    if (window.ethereum) {
-      return new ethers.providers.Web3Provider(window.ethereum);
-    }
-  }
-
-  const provider = retrieveProvider();
-
-  //console.log(props.network_id);
-
   const bankSC = new ethers.Contract(
-    BankJson.networks[props.network_id].address,
+    BankJson.networks[networkId].address,
     BankJson.abi,
     provider
   );
@@ -70,8 +64,8 @@ function Game(props) {
         {provider && (
           <User
             provider={provider}
-            address={props.address}
-            network_id={props.network_id}
+            address={address}
+            network_id={networkId}
           />
         )}
       </div>
