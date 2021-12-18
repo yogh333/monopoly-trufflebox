@@ -1,12 +1,12 @@
 import { useState, useEffect } from "react"
-import { BrowserRouter, Route, Routes } from 'react-router-dom'
+import {BrowserRouter, Navigate, Route, Routes} from 'react-router-dom'
 import "bootstrap/dist/css/bootstrap.min.css"
 import Button from "react-bootstrap/Button"
 import Container from "react-bootstrap/Container"
 import Nav from "react-bootstrap/Nav"
 import Navbar from "react-bootstrap/Navbar"
 
-//import Admin from "./components/Game/Admin";
+import Admin from "./components/Admin/Admin";
 import Game from "./components/Game/Game";
 import Home from "./components/Home/Home";
 
@@ -104,7 +104,13 @@ function App() {
               address = { address }
             />
           } />
-          <Route exact path='/admin/' />
+          <Route exact path='/admin/' element={
+            <Admin
+              provider = { provider }
+              network_id = { networkId }
+              address = { address }
+            />
+          } />
           <Route exact path='/game' element={
             <Game
               provider = { provider }
@@ -119,6 +125,10 @@ function App() {
               address = { address }
             />
           } />
+          <Route
+            path="*"
+            element={<Navigate to="/" />}
+          />
         </Routes>
       </BrowserRouter>
     </div>
