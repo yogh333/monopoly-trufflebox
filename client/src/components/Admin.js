@@ -2,11 +2,11 @@ import {useState, useEffect, useRef} from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { ethers } from "ethers";
 
-import "./Admin.css";
+import "../css/Admin.css";
 
-import Paris from "../../data/Paris.json";
+import Paris from "../data/Paris.json";
 
-import BankJson from "../../contracts/MonopolyBank.json";
+import BankJson from "../contracts/MonopolyBank.json";
 import Button from "react-bootstrap/Button";
 import Spinner from "react-bootstrap/Spinner";
 import Container from "react-bootstrap/Container";

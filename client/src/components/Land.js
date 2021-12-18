@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
 import { ethers } from "ethers";
 
-import PropJson from "../../contracts/MonopolyProp.json";
-import BuildJson from "../../contracts/MonopolyBuild.json";
-import BankJson from "../../contracts/MonopolyBank.json";
+import PropJson from "../contracts/MonopolyProp.json";
+import BuildJson from "../contracts/MonopolyBuild.json";
+import BankJson from "../contracts/MonopolyBank.json";
 
 export default function Land(props) {
   const landInfo = props.land_info;

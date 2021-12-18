@@ -2,10 +2,10 @@ import { useState, useEffect } from "react";
 import { ethers } from "ethers";
 import Spinner from "react-bootstrap/Spinner"
 
-import MonoJson from "../../contracts/MonopolyMono.json";
-import PropJson from "../../contracts/MonopolyProp.json";
+import MonoJson from "../contracts/MonopolyMono.json";
+import PropJson from "../contracts/MonopolyProp.json";
 
-import "./User.css";
+import "../css/User.css";
 
 export default function User(props) {
   const spinner = <Spinner as="span" animation="border" size="sm" />

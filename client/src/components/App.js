@@ -6,11 +6,11 @@ import Container from "react-bootstrap/Container"
 import Nav from "react-bootstrap/Nav"
 import Navbar from "react-bootstrap/Navbar"
 
-import Admin from "./components/Admin/Admin";
-import Game from "./components/Game/Game";
-import Home from "./components/Home/Home";
+import Admin from "./Admin";
+import Game from "./Game";
+import Home from "./Home";
 
-import "./App.css"
+import "../css/App.css"
 import {ethers} from "ethers";
 
 function App() {

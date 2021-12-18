@@ -1,5 +1,5 @@
 import React from "react";
-import "./Grid.css";
+import "../css/Grid.css";
 
 export default function Grid(props) {
   let elements = [];

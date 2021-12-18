@@ -1,6 +1,6 @@
 import Image from "react-bootstrap/Image"
 
-import "./Home.css"
+import "../css/Home.css"
 
 function Home() {
   return (<>

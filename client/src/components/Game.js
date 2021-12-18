@@ -2,14 +2,14 @@ import { useState, useEffect } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { ethers } from "ethers";
 
-import "./Game.css";
+import "../css/Game.css";
 
-import Paris from "../../data/Paris.json";
-import Grid from "../Grid";
-import User from "../User/User";
-import Land from "../Land/Land";
+import Paris from "../data/Paris.json";
+import Grid from "./Grid";
+import User from "./User";
+import Land from "./Land";
 
-import BankJson from "../../contracts/MonopolyBank.json";
+import BankJson from "../contracts/MonopolyBank.json";
 
 function Game(props) {
   const provider = props.provider
