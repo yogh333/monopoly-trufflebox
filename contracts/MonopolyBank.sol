@@ -5,6 +5,7 @@ pragma solidity ^0.8.0;
 import "@openzeppelin/contracts/access/AccessControl.sol";
 import "@openzeppelin/contracts/token/ERC721/IERC721Receiver.sol";
 
+import "./MonopolyPawn.sol";
 import "./MonopolyBoard.sol";
 import "./MonopolyMono.sol";
 import "./MonopolyProp.sol";
