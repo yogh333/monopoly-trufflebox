@@ -1,9 +1,8 @@
 import React from "react";
 import "../css/Grid.css";
 
-import Paris from "../data/Paris.json";
-
 export default function Grid(props) {
+  const board = props.board
   let elements = [];
 
   function handleClick(e) {
@@ -11,9 +10,9 @@ export default function Grid(props) {
     props.displayInfo(parseInt(e.target.id.substring(5)));
   }
 
-  props.data.forEach((element, index) => {
+  board.lands.forEach((element, index) => {
     const id = "cell-" + index;
-    const position = Paris.lands[index].position
+    const position = board.lands[index].position
 
     elements.push(
       /*<img

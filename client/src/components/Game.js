@@ -15,7 +15,7 @@ import Spinner from "react-bootstrap/Spinner";
 function Game(props) {
   const spinner = <Spinner as="span" animation="border" size="sm" />
 
-  const board = require(`../data/${boards[parseInt(props.editionId)]}.json`);
+  const board = require(`../data/${boards[parseInt(props.edition_id)]}.json`);
 
   const provider = props.provider
   const networkId = props.network_id
@@ -121,7 +121,10 @@ function Game(props) {
         { isRetrievingInfo ? spinner : <Land land_info={landInfo} />}
       </div>
       <div className="main-area">
-        <Grid data={board.lands} displayInfo={displayInfo} />
+        <Grid
+          board={board}
+          displayInfo={displayInfo}
+        />
       </div>
     </div>
   );

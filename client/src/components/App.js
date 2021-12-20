@@ -116,7 +116,7 @@ function App() {
               provider = { provider }
               network_id = { networkId }
               address = { address }
-              editionId = "0"
+              edition_id = "0"
             />
           } />
           <Route exact path='/staking' element={
