@@ -9,6 +9,7 @@ import "./MonopolyBoard.sol";
 import "./MonopolyMono.sol";
 import "./MonopolyProp.sol";
 import "./MonopolyBuild.sol";
+import "./MonopolyBoard.sol";
 
 contract MonopolyBank is AccessControl, IERC721Receiver {
 	bytes32 public constant ADMIN_ROLE = keccak256("ADMIN_ROLE");
@@ -17,9 +18,11 @@ contract MonopolyBank is AccessControl, IERC721Receiver {
 	MonopolyProp private immutable monopolyPROP;
 	MonopolyBuild private immutable monopolyBUILD;
 	MonopolyMono private immutable monopolyMONO;
+	MonopolyBoard private immutable monopolyBOARD;
 
 	// price_by_rarity_by_land_by_edition (prop token)
 	mapping(uint16 => mapping(uint8 => mapping(uint8 => uint256))) propPrices;
+
 	// price_by_buildtype_by_land_by_edition (build token)
 	mapping(uint16 => mapping(uint8 => mapping(uint8 => uint256))) buildPrices;
 
@@ -32,15 +35,18 @@ contract MonopolyBank is AccessControl, IERC721Receiver {
 	constructor(
 		address _monopolyPROP,
 		address _monopolyBUILD,
-		address _monopolyMONO
+		address _monopolyMONO,
+		address _monopolyBOARD
 	) {
 		require(_monopolyPROP != address(0), "PROP token smart contract address must be provided");
 		require(_monopolyBUILD != address(0), "BUILD token smart contract address must be provided");
 		require(_monopolyMONO != address(0), "MONO token smart contract address must be provided");
+		require(_monopolyBOARD != address(0), "MONO token smart contract address must be provided");
 
 		monopolyPROP = MonopolyProp(_monopolyPROP);
 		monopolyBUILD = MonopolyBuild(_monopolyBUILD);
 		monopolyMONO = MonopolyMono(_monopolyMONO);
+		monopolyBOARD = MonopolyBoard(_monopolyBOARD);
 
 		// set PROP and BUILD prices for edition 0
 		mapping(uint8 => mapping(uint8 => uint256)) storage p = propPrices[0];
@@ -273,5 +279,32 @@ contract MonopolyBank is AccessControl, IERC721Receiver {
 		bytes calldata data
 	) external pure override returns (bytes4) {
 		return this.onERC721Received.selector;
+	}
+
+	function setBoardPrices(
+		uint16 editionId,
+		uint8 maxLands,
+		uint8 maxLandRarities,
+		uint16 rarityMultiplier,
+		uint16 buildingMultiplier,
+		uint256[] calldata commonLandPrices,
+		uint256[] calldata commonHousePrices
+	) external onlyRole(ADMIN_ROLE) {
+		for (uint8 landId = 0; landId < maxLands; landId++) {
+			if (commonLandPrices[landId] == 0) {
+				continue;
+			}
+
+			for (uint8 rarity = 0; rarity < maxLandRarities; rarity++) {
+				propPrices[editionId][landId][rarity] = commonLandPrices[landId] * rarityMultiplier ** (maxLandRarities - rarity -1) * (1 ether);
+			}
+
+			if (commonHousePrices[landId] == 0) {
+				continue;
+			}
+
+			buildPrices[editionId][landId][0] = commonHousePrices[landId] * (1 ether);
+			buildPrices[editionId][landId][1] = commonHousePrices[landId] * buildingMultiplier * (1 ether);
+		}
 	}
 }
