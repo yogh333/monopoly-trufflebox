@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { ethers } from "ethers";
 
 import PropJson from "../../contracts/MonopolyProp.json";

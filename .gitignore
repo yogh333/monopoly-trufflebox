@@ -1,2 +1,5 @@
+migrations
+truffle-config.js
+node_modules
 build/
 client/src/contracts/

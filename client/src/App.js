@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import Button from "react-bootstrap/Button";
 import { ethers } from "ethers";
@@ -43,7 +43,7 @@ function App() {
           );
         });
         let bank = new ethers.Contract(
-          BankJson.networks[123456789].address,
+          BankJson.networks["1639998348801"].address,
           BankJson.abi,
           p.getSigner()
         );
