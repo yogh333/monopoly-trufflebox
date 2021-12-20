@@ -32,6 +32,12 @@ function Game(props) {
   const [isRetrievingInfo, setIsRetrievingInfo] = useState(false)
 
   useEffect(() => {
+    if (window.ethereum && !window.ethereum.selectedAddress) { // Redirect to Home if disconnected
+      window.location.href = "/"
+
+      return
+    }
+
     if (!(provider && address && networkId)) {
       return
     }
