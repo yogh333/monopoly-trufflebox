@@ -4,57 +4,97 @@ import { ethers } from "ethers";
 
 import "../css/Game.css";
 
-import Paris from "../data/Paris.json";
+import boards from "../data/boards.json";
 import Grid from "./Grid";
 import User from "./User";
 import Land from "./Land";
 
 import BankJson from "../contracts/MonopolyBank.json";
+import Spinner from "react-bootstrap/Spinner";
 
 function Game(props) {
+  const spinner = <Spinner as="span" animation="border" size="sm" />
+
+  const board = require(`../data/${boards[parseInt(props.editionId)]}.json`);
+
   const provider = props.provider
   const networkId = props.network_id
   const address = props.address
 
+  const [Bank, setBank] = useState(null)
   const [visual, setVisual] = useState(<div>Property visual</div>);
   const [landInfo, setLandInfo] = useState({
     title: "undefined",
     prices: { rare: "0", uncommon: "0", common: "0" },
     bprices: { house: "0", hotel: "0" },
   });
+  const [isReadyToRender, setIsReadyToRender] = useState(false)
+  const [isRetrievingInfo, setIsRetrievingInfo] = useState(false)
 
-  const bankSC = new ethers.Contract(
-    BankJson.networks[networkId].address,
-    BankJson.abi,
-    provider
-  );
+  useEffect(() => {
+    if (!(provider && address && networkId)) {
+      return
+    }
+
+    setBank(new ethers.Contract(
+      BankJson.networks[networkId].address,
+      BankJson.abi,
+      provider.getSigner(address)
+    ))
+  }, [provider, address, networkId])
+
+  useEffect(() => {
+    if (!Bank) {
+      return
+    }
+
+    setIsReadyToRender(true)
+  }, [Bank])
+
+  const retrieveCellPrices = async (editionId, cellID) => {
+    console.log("get prices !");
+
+    let propertiesPrices = [];
+    for (let rarity = 0; rarity < board.maxLandRarities; rarity++) {
+      propertiesPrices[rarity] = await Bank.getPriceOfProp(editionId, cellID, rarity)
+    }
+
+    const HOUSE = 0
+    const HOTEL = 1
+    let buildingsPrices = []
+    buildingsPrices[HOUSE] = await Bank.getPriceOfBuild(editionId, cellID, HOUSE)
+    buildingsPrices[HOTEL] = await Bank.getPriceOfBuild(editionId, cellID, HOTEL)
+
+    return {
+      "properties": propertiesPrices,
+      "buildings": buildingsPrices
+    }
+  }
 
   async function displayInfo(cellID) {
-    setVisual(<img className="land" src={Paris[cellID].visual} />);
-    if (bankSC != null) {
-      console.log("get prices !");
-      let prop_prices = [];
-      for (let i = 0; i < 3; i++) {
-        prop_prices[i] = await bankSC.getPriceOfProp(0, cellID, i);
-      }
-      let build_prices = [];
-      for (let i = 0; i < 2; i++) {
-        build_prices[i] = await bankSC.getPriceOfBuild(0, cellID, i);
-      }
-      let land = {
-        title: Paris[cellID].name,
+    setVisual(<img className="land" src={board.lands[cellID].visual} />);
+    if (Bank != null) {
+      setIsRetrievingInfo(true)
+      const prices = await retrieveCellPrices(board.id, cellID);
+      const land = {
+        title: board.lands[cellID].name,
         prices: {
-          rare: ethers.utils.formatUnits(prop_prices[0]),
-          uncommon: ethers.utils.formatUnits(prop_prices[1]),
-          common: ethers.utils.formatUnits(prop_prices[2]),
+          rare: ethers.utils.formatUnits(prices.properties[0]),
+          uncommon: ethers.utils.formatUnits(prices.properties[1]),
+          common: ethers.utils.formatUnits(prices.properties[2]),
         },
         bprices: {
-          house: ethers.utils.formatUnits(build_prices[0]),
-          hotel: ethers.utils.formatUnits(build_prices[1]),
+          house: ethers.utils.formatUnits(prices.buildings[0]),
+          hotel: ethers.utils.formatUnits(prices.buildings[1]),
         },
       };
       setLandInfo(land);
+      setIsRetrievingInfo(false)
     }
+  }
+
+  if (!isReadyToRender) {
+    return (<>{spinner}</>)
   }
 
   return (
@@ -78,10 +118,10 @@ function Game(props) {
       </div>
       <div className="info-area-4">
         <h2>Property Info</h2>
-        {<Land land_info={landInfo} />}
+        { isRetrievingInfo ? spinner : <Land land_info={landInfo} />}
       </div>
       <div className="main-area">
-        <Grid data={Paris} displayInfo={displayInfo} />
+        <Grid data={board.lands} displayInfo={displayInfo} />
       </div>
     </div>
   );

@@ -1,6 +1,8 @@
 import React from "react";
 import "../css/Grid.css";
 
+import Paris from "../data/Paris.json";
+
 export default function Grid(props) {
   let elements = [];
 
@@ -10,16 +12,8 @@ export default function Grid(props) {
   }
 
   props.data.forEach((element, index) => {
-    let id = "cell-" + index;
-    let position = "bottom"
-
-    if (index >= 11 && index <= 19) {
-      position = "left"
-    } else if (index >= 20 && index <= 30) {
-      position = "top"
-    } else if (index > 30){
-      position = "right"
-    }
+    const id = "cell-" + index;
+    const position = Paris.lands[index].position
 
     elements.push(
       /*<img

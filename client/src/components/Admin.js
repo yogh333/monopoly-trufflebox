@@ -20,7 +20,6 @@ function Admin(props) {
 
   const [Bank, setBank] = useState(null)
   const [adminRole, setAdminRole] = useState(null)
-  const [hasAdminRole, setHasAdminRole] = useState(false)
   const [isReadyToRender, setIsReadyToRender] = useState(false)
 
   let lastAddress = null
@@ -43,7 +42,7 @@ function Admin(props) {
     setBank(new ethers.Contract(
       BankJson.networks[networkId].address,
       BankJson.abi,
-      provider
+      provider.getSigner(address)
     ))
   }, [provider, address, networkId]);
 
@@ -59,7 +58,7 @@ function Admin(props) {
 
   useEffect(() => {
     if (!(Bank && adminRole)) {
-      setHasAdminRole(false)
+      setIsReadyToRender(false)
 
       return
     }
@@ -71,16 +70,37 @@ function Admin(props) {
         return
       }
 
-      setHasAdminRole(true)
       setIsReadyToRender(true)
     })
   }, [adminRole]);
 
   async function sendPricesToBank() {
+    let commonLandPrices = []
+    let commonHousePrices = []
+    Paris.lands.forEach((land, index) => {
+      commonLandPrices[index] = 0
+      if(land.hasOwnProperty('commonPrice')){
+        commonLandPrices[index] = land.commonPrice
+      }
 
+      commonHousePrices[index] = 0
+      if(land.hasOwnProperty('commonHousePrice')){
+        commonHousePrices[index] = land.commonHousePrice
+      }
+    })
+
+    await Bank.setBoardPrices(
+      Paris.id,
+      Paris.maxLands,
+      Paris.maxLandRarities,
+      Paris.rarityMultiplier,
+      Paris.buildingMultiplier,
+      commonLandPrices,
+      commonHousePrices
+    )
   }
 
-  if (!isReadyToRender || !hasAdminRole) {
+  if (!isReadyToRender) {
     return (<></>)
   }
 

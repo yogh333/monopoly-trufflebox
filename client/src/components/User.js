@@ -17,24 +17,26 @@ export default function User(props) {
   const [balance, setBalance] = useState(spinner);
   const [prop, setProp] = useState(0);
 
-  const MonoSC = new ethers.Contract(
-    MonoJson.networks[networkId].address,
-    MonoJson.abi,
-    provider
-  );
-
-  const PropSC = new ethers.Contract(
-    PropJson.networks[networkId].address,
-    PropJson.abi,
-    provider
-  );
-
   useEffect(() => {
-    MonoSC.balanceOf(address).then((value) =>
-      setBalance(ethers.utils.formatUnits(value))
+    if (!(provider && address && networkId)) {
+      return
+    }
+
+    const Mono = new ethers.Contract(
+      MonoJson.networks[networkId].address,
+      MonoJson.abi,
+      provider
     );
-    PropSC.balanceOf(address).then((value) => setProp(value.toNumber()));
-  }, [address]);
+
+    const Prop = new ethers.Contract(
+      PropJson.networks[networkId].address,
+      PropJson.abi,
+      provider
+    );
+
+    Mono.balanceOf(address).then((value) => setBalance(ethers.utils.formatUnits(value)));
+    Prop.balanceOf(address).then((value) => setProp(value.toNumber()));
+  }, [address, provider, networkId]);
 
   return (
     <div>
