@@ -1,3 +1,5 @@
+Paris = require("../client/src/data/Paris.json");
+
 const MonopolyPawn = artifacts.require("MonopolyPawn");
 const MonopolyMono = artifacts.require("MonopolyMono");
 const MonopolyBoard = artifacts.require("MonopolyBoard");
@@ -47,5 +49,35 @@ module.exports = async function (deployer, network, accounts) {
   await MonopolyMonoInstance.mint(
     accounts[1],
     web3.utils.toWei("1000", "ether")
+  );
+
+  // Setup roles
+
+  // initialize Paris board prices
+  let commonLandPrices = []
+  let commonHousePrices = []
+  Paris.lands.forEach((land, index) => {
+    commonLandPrices[index] = 0
+    if(land.hasOwnProperty('commonPrice')){
+      commonLandPrices[index] = land.commonPrice
+    }
+
+    commonHousePrices[index] = 0
+    if(land.hasOwnProperty('commonHousePrice')){
+      commonHousePrices[index] = land.commonHousePrice
+    }
+  })
+
+  const MonopolyBankInstance = await MonopolyBank.deployed();
+
+  await MonopolyBankInstance.setBoardPrices(
+    Paris.id,
+    Paris.maxLands,
+    Paris.maxLandRarities,
+    Paris.rarityMultiplier,
+    Paris.buildingMultiplier,
+    commonLandPrices,
+    commonHousePrices,
+    { "from": accounts[0] }
   );
 };
