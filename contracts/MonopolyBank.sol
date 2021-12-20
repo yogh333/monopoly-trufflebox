@@ -9,7 +9,6 @@ import "./MonopolyBoard.sol";
 import "./MonopolyMono.sol";
 import "./MonopolyProp.sol";
 import "./MonopolyBuild.sol";
-import "./MonopolyBoard.sol";
 
 contract MonopolyBank is AccessControl, IERC721Receiver {
 	bytes32 public constant ADMIN_ROLE = keccak256("ADMIN_ROLE");
@@ -18,7 +17,6 @@ contract MonopolyBank is AccessControl, IERC721Receiver {
 	MonopolyProp private immutable monopolyPROP;
 	MonopolyBuild private immutable monopolyBUILD;
 	MonopolyMono private immutable monopolyMONO;
-	MonopolyBoard private immutable monopolyBOARD;
 
 	// price_by_rarity_by_land_by_edition (prop token)
 	mapping(uint16 => mapping(uint8 => mapping(uint8 => uint256))) propPrices;
@@ -35,129 +33,18 @@ contract MonopolyBank is AccessControl, IERC721Receiver {
 	constructor(
 		address _monopolyPROP,
 		address _monopolyBUILD,
-		address _monopolyMONO,
-		address _monopolyBOARD
+		address _monopolyMONO
 	) {
 		require(_monopolyPROP != address(0), "PROP token smart contract address must be provided");
 		require(_monopolyBUILD != address(0), "BUILD token smart contract address must be provided");
 		require(_monopolyMONO != address(0), "MONO token smart contract address must be provided");
-		require(_monopolyBOARD != address(0), "MONO token smart contract address must be provided");
 
 		monopolyPROP = MonopolyProp(_monopolyPROP);
 		monopolyBUILD = MonopolyBuild(_monopolyBUILD);
 		monopolyMONO = MonopolyMono(_monopolyMONO);
-		monopolyBOARD = MonopolyBoard(_monopolyBOARD);
 
-		// set PROP and BUILD prices for edition 0
-		mapping(uint8 => mapping(uint8 => uint256)) storage p = propPrices[0];
-		mapping(uint8 => mapping(uint8 => uint256)) storage b = buildPrices[0];
-
-		p[1][0] = 600 ether;
-		p[1][1] = 60 ether;
-		p[1][2] = 6 ether;
-		p[3][0] = 600 ether;
-		p[3][1] = 60 ether;
-		p[3][2] = 6 ether;
-		b[1][0] = b[3][0] = 1 ether;
-		b[1][1] = b[3][1] = 2 ether;
-
-		p[5][0] = 100 ether;
-		p[5][1] = 10 ether;
-		p[5][2] = 1 ether;
-
-		p[6][0] = 1000 ether;
-		p[6][1] = 100 ether;
-		p[6][2] = 10 ether;
-		p[8][0] = 1000 ether;
-		p[8][1] = 100 ether;
-		p[8][2] = 10 ether;
-		p[9][0] = 1200 ether;
-		p[9][1] = 120 ether;
-		p[9][2] = 12 ether;
-		b[6][0] = b[8][0] = b[9][0] = 1 ether;
-		b[6][1] = b[8][1] = b[9][1] = 2 ether;
-
-		p[11][0] = 1400 ether;
-		p[11][1] = 140 ether;
-		p[11][2] = 14 ether;
-		p[13][0] = 1400 ether;
-		p[13][1] = 140 ether;
-		p[13][2] = 14 ether;
-		p[14][0] = 1600 ether;
-		p[14][1] = 160 ether;
-		p[14][2] = 16 ether;
-		b[11][0] = b[13][0] = b[14][0] = 1 ether;
-		b[11][1] = b[13][1] = b[14][1] = 2 ether;
-
-		p[15][0] = 100 ether;
-		p[15][1] = 10 ether;
-		p[15][2] = 1 ether;
-
-		p[16][0] = 1800 ether;
-		p[16][1] = 180 ether;
-		p[16][2] = 18 ether;
-		p[18][0] = 1800 ether;
-		p[18][1] = 180 ether;
-		p[18][2] = 18 ether;
-		p[19][0] = 2000 ether;
-		p[19][1] = 200 ether;
-		p[19][2] = 20 ether;
-		b[16][0] = b[18][0] = b[19][0] = 1 ether;
-		b[16][1] = b[18][1] = b[19][1] = 2 ether;
-
-		p[21][0] = 2200 ether;
-		p[21][1] = 220 ether;
-		p[21][2] = 22 ether;
-		p[23][0] = 2200 ether;
-		p[23][1] = 220 ether;
-		p[23][2] = 22 ether;
-		p[24][0] = 2400 ether;
-		p[24][1] = 240 ether;
-		p[24][2] = 24 ether;
-		b[21][0] = b[23][0] = b[24][0] = 1 ether;
-		b[21][1] = b[23][1] = b[24][1] = 2 ether;
-
-		p[25][0] = 100 ether;
-		p[25][1] = 10 ether;
-		p[25][2] = 1 ether;
-
-		p[26][0] = 2600 ether;
-		p[26][1] = 260 ether;
-		p[26][2] = 26 ether;
-		p[27][0] = 2600 ether;
-		p[27][1] = 260 ether;
-		p[27][2] = 26 ether;
-		p[29][0] = 2800 ether;
-		p[29][1] = 280 ether;
-		p[29][2] = 28 ether;
-		b[26][0] = b[27][0] = b[29][0] = 1 ether;
-		b[26][1] = b[27][1] = b[29][1] = 2 ether;
-
-		p[31][0] = 3000 ether;
-		p[31][1] = 300 ether;
-		p[31][2] = 30 ether;
-		p[32][0] = 3000 ether;
-		p[32][1] = 300 ether;
-		p[32][2] = 30 ether;
-		p[34][0] = 3200 ether;
-		p[34][1] = 320 ether;
-		p[34][2] = 32 ether;
-		b[31][0] = b[32][0] = b[34][0] = 1 ether;
-		b[31][1] = b[32][1] = b[34][1] = 2 ether;
-
-		p[35][0] = 100 ether;
-		p[35][1] = 10 ether;
-		p[35][2] = 1 ether;
-
-		p[37][0] = 3500 ether;
-		p[37][1] = 350 ether;
-		p[37][2] = 35 ether;
-		p[39][0] = 4000 ether;
-		p[39][1] = 400 ether;
-		p[39][2] = 40 ether;
-		b[37][0] = b[39][0] = 1 ether;
-		b[37][1] = b[39][1] = 2 ether;
-
+		// Set roles
+		// Must be set at deployment or in admin ?
 		_setupRole(ADMIN_ROLE, msg.sender);
 		_setRoleAdmin(ADMIN_ROLE, ADMIN_ROLE);
 		_setupRole(BANKER_ROLE, msg.sender);
