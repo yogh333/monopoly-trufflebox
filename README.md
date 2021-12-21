@@ -1,4 +1,5 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 # monopoly-trufflebox
 Monopoly World smart contracts and React-based Dapp
 
@@ -57,24 +58,24 @@ npm start
 ```
 =======
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+=======
+>>>>>>> 494812a (improve README, add MPs token contract and test associated)
 
 ## Available Scripts
 
 In the project directory, you can run:
 
-### `yarn start`
+### npm test
 
-Runs the app in the development mode.<br />
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+gonna run every test file on ./test
 
-The page will reload if you make edits.<br />
-You will also see any lint errors in the console.
+### npm start
 
-### `yarn test`
+build EVM contract on repositories under config files (cf truffle)
+make sure to build on EVM compatible network 
 
-Launches the test runner in the interactive watch mode.<br />
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
 
+<<<<<<< HEAD
 ### `yarn build`
 
 Builds the app for production to the `build` folder.<br />
@@ -125,3 +126,5 @@ This section has moved here: https://facebook.github.io/create-react-app/docs/de
 
 This section has moved here: https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify
 >>>>>>> a1021e6 (first commit without migration, config, useless file and fix bug)
+=======
+>>>>>>> 494812a (improve README, add MPs token contract and test associated)
