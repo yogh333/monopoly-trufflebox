@@ -10,6 +10,9 @@ import BankJson from "../contracts/MonopolyBank.json";
 import Button from "react-bootstrap/Button";
 import Spinner from "react-bootstrap/Spinner";
 import Container from "react-bootstrap/Container";
+import MonoJson from "../contracts/MonopolyMono.json";
+import PropJson from "../contracts/MonopolyProp.json";
+import BuildJson from "../contracts/MonopolyBuild.json";
 
 function Admin(props) {
   const spinner = <Spinner as="span" animation="border" size="sm" />
@@ -76,28 +79,52 @@ function Admin(props) {
 
   async function sendPricesToBank() {
     let commonLandPrices = []
-    let commonHousePrices = []
+    let housePrices = []
     Paris.lands.forEach((land, index) => {
       commonLandPrices[index] = 0
       if(land.hasOwnProperty('commonPrice')){
         commonLandPrices[index] = land.commonPrice
       }
 
-      commonHousePrices[index] = 0
-      if(land.hasOwnProperty('commonHousePrice')){
-        commonHousePrices[index] = land.commonHousePrice
+      housePrices[index] = 0
+      if(land.hasOwnProperty('housePrice')){
+        housePrices[index] = land.housePrice
       }
     })
 
-    await Bank.setBoardPrices(
+    await Bank.setPrices(
       Paris.id,
       Paris.maxLands,
       Paris.maxLandRarities,
       Paris.rarityMultiplier,
       Paris.buildingMultiplier,
       commonLandPrices,
-      commonHousePrices
+      housePrices
     )
+  }
+
+  async function setRoles() {
+    const Mono = new ethers.Contract(
+      MonoJson.networks[networkId].address,
+      MonoJson.abi,
+      provider.getSigner(address)
+    )
+    const Prop = new ethers.Contract(
+      PropJson.networks[networkId].address,
+      PropJson.abi,
+      provider.getSigner(address)
+    )
+    const Build = new ethers.Contract(
+      BuildJson.networks[networkId].address,
+      BuildJson.abi,
+      provider.getSigner(address)
+    )
+
+    const ADMIN_ROLE = await Prop.ADMIN_ROLE()
+    const MINTER_ROLE = await Prop.MINTER_ROLE()
+
+    Prop.grantRole(MINTER_ROLE, BankJson.networks[networkId].address).then((result) => console.log("minter role granted"))
+    Build.grantRole(MINTER_ROLE, BankJson.networks[networkId].address).then((result) => console.log("minter role granted"))
   }
 
   if (!isReadyToRender) {
@@ -110,6 +137,10 @@ function Admin(props) {
         <h1>Admin</h1>
         <Button className="mx-3" variant="primary" onClick={sendPricesToBank}>
           Send prices to Bank for Paris Board
+        </Button>
+
+        <Button className="mx-3" variant="primary" onClick={setRoles}>
+          Set roles
         </Button>
       </Container>
     </div>

@@ -24,10 +24,11 @@ function Game(props) {
   const [Bank, setBank] = useState(null)
   const [visual, setVisual] = useState(<div>Property visual</div>);
   const [landInfo, setLandInfo] = useState({
+    id: null,
     title: "undefined",
     prices: { rare: "0", uncommon: "0", common: "0" },
     bprices: { house: "0", hotel: "0" },
-  });
+  }); // replace by useState(null) ?
   const [isReadyToRender, setIsReadyToRender] = useState(false)
   const [isRetrievingInfo, setIsRetrievingInfo] = useState(false)
 
@@ -83,6 +84,7 @@ function Game(props) {
       setIsRetrievingInfo(true)
       const prices = await retrieveCellPrices(board.id, cellID);
       const land = {
+        id: cellID,
         title: board.lands[cellID].name,
         prices: {
           rare: ethers.utils.formatUnits(prices.properties[0]),
@@ -124,7 +126,17 @@ function Game(props) {
       </div>
       <div className="info-area-4">
         <h2>Property Info</h2>
-        { isRetrievingInfo ? spinner : <Land land_info={landInfo} />}
+        { isRetrievingInfo
+          ? spinner
+          : <Land
+              land_info={landInfo}
+              bank_contract={Bank}
+              edition_id={props.edition_id}
+              address={address}
+              network_id={networkId}
+              provider={provider}
+            />
+        }
       </div>
       <div className="main-area">
         <Grid

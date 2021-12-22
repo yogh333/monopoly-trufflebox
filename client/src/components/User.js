@@ -6,6 +6,7 @@ import MonoJson from "../contracts/MonopolyMono.json";
 import PropJson from "../contracts/MonopolyProp.json";
 
 import "../css/User.css";
+import BuildJson from "../contracts/MonopolyBuild.json";
 
 export default function User(props) {
   const spinner = <Spinner as="span" animation="border" size="sm" />
@@ -15,7 +16,7 @@ export default function User(props) {
   const networkId = props.network_id;
 
   const [balance, setBalance] = useState(spinner);
-  const [prop, setProp] = useState(0);
+  const [prop, setProp] = useState(spinner);
 
   useEffect(() => {
     if (!(provider && address && networkId)) {

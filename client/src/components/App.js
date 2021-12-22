@@ -37,6 +37,10 @@ function App() {
   }
 
   useEffect(() => {
+    if (window.ethereum && window.ethereum.selectedAddress && !address) {
+      setAddress(window.ethereum.selectedAddress)
+    }
+
     subscribeEthereumEvents()
     setProvider(getProvider())
   }, [])
