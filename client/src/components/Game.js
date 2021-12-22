@@ -23,22 +23,23 @@ function Game(props) {
 
   const [Bank, setBank] = useState(null)
   const [visual, setVisual] = useState(<div>Property visual</div>);
+  //const [currentLandId, setCurrentLandId] = useState(0);
   const [landInfo, setLandInfo] = useState({
     id: null,
     title: "undefined",
     prices: { rare: "0", uncommon: "0", common: "0" },
     bprices: { house: "0", hotel: "0" },
-  }); // replace by useState(null) ?
+  });
   const [isReadyToRender, setIsReadyToRender] = useState(false)
   const [isRetrievingInfo, setIsRetrievingInfo] = useState(false)
 
   useEffect(() => {
-    if (window.ethereum && !window.ethereum.selectedAddress) { // Redirect to Home if disconnected
+    /*if (window.ethereum && !window.ethereum.selectedAddress) { // Redirect to Home if disconnected
       window.location.href = "/"
 
       return
     }
-
+*/
     if (!(provider && address && networkId)) {
       return
     }

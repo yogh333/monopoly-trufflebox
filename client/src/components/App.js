@@ -15,19 +15,39 @@ import {ethers} from "ethers";
 
 function App() {
   const [provider, setProvider] = useState(null)
-  const [networkId, setNetworkId] = useState(window.ethereum && window.ethereum.networkVersion)
-  const [address, setAddress] = useState(window.ethereum && window.ethereum.selectedAddress)
+  const [networkId, setNetworkId] = useState(null)
+  const [address, setAddress] = useState(null)
 
-  const subscribeEthereumEvents = () => {
-    window.ethereum.on('accountsChanged', accounts => {
-      setAddress(accounts[0])
-      console.log(`Accounts updated: ${accounts}`)
-    })
+  window.ethereum
+    .request({method: 'eth_chainId'})
+    .then((value) => setNetworkId(parseInt(value)))
+    .catch((err) => {
+      console.error(err);
+    });
 
-    window.ethereum.on('chainChanged', networkId => {
-      console.log(`Network updated: ${networkId}`)
-      window.location.reload()
-    })
+  window.ethereum.on('chainChanged', handleChainChanged);
+
+  function handleChainChanged() {
+    window.location.reload();
+  }
+
+  let currentAccount = null;
+  window.ethereum
+    .request({method: 'eth_accounts'})
+    .then(handleAccountsChanged)
+    .catch((err) => {
+      console.error(err);
+    });
+
+  window.ethereum.on('accountsChanged', handleAccountsChanged);
+
+  function handleAccountsChanged(accounts) {
+    console.log(accounts)
+    if (accounts.length === 0) {
+      console.log('Please connect to MetaMask.');
+    } else if (accounts[0] !== address) {
+      setAddress(accounts[0]);
+    }
   }
 
   function getProvider() {
@@ -37,19 +57,22 @@ function App() {
   }
 
   useEffect(() => {
-    if (window.ethereum && window.ethereum.selectedAddress && !address) {
-      setAddress(window.ethereum.selectedAddress)
+    console.log("useEffect[]")
+    console.log(address)
+    if (window.ethereum  && !address) {
+      setAddress(currentAccount)
     }
 
-    subscribeEthereumEvents()
     setProvider(getProvider())
   }, [])
 
   useEffect(() => {
+    console.log("useEffect[networkId, address]")
+    console.log(address)
     setProvider(getProvider())
   }, [networkId, address])
 
-  async function connectWallet() {
+/*  async function connectWallet() {
     if (address) {
       return
     }
@@ -63,6 +86,21 @@ function App() {
         // address is set by ethereum event
       }
     }
+  }*/
+
+  function connectWallet() {
+    window.ethereum
+      .request({ method: 'eth_requestAccounts' })
+      .then(handleAccountsChanged)
+      .catch((err) => {
+        if (err.code === 4001) {
+          // EIP-1193 userRejectedRequest error
+          // If this happens, the user rejected the connection request.
+          console.log('Please connect to MetaMask.');
+        } else {
+          console.error(err);
+        }
+      });
   }
 
   function renderOthersLinks() {
