@@ -44,7 +44,6 @@ contract MonopolyBank is AccessControl, IERC721Receiver {
 		monopolyMONO = MonopolyMono(_monopolyMONO);
 
 		// Set roles
-		// Must be set at deployment or in admin ?
 		_setupRole(ADMIN_ROLE, msg.sender);
 		_setRoleAdmin(ADMIN_ROLE, ADMIN_ROLE);
 		_setupRole(BANKER_ROLE, msg.sender);
@@ -168,14 +167,14 @@ contract MonopolyBank is AccessControl, IERC721Receiver {
 		return this.onERC721Received.selector;
 	}
 
-	function setBoardPrices(
+	function setPrices(
 		uint16 editionId,
 		uint8 maxLands,
 		uint8 maxLandRarities,
 		uint16 rarityMultiplier,
 		uint16 buildingMultiplier,
 		uint256[] calldata commonLandPrices,
-		uint256[] calldata commonHousePrices
+		uint256[] calldata housePrices
 	) external onlyRole(ADMIN_ROLE) {
 		for (uint8 landId = 0; landId < maxLands; landId++) {
 			if (commonLandPrices[landId] == 0) {
@@ -186,12 +185,12 @@ contract MonopolyBank is AccessControl, IERC721Receiver {
 				propPrices[editionId][landId][rarity] = commonLandPrices[landId] * rarityMultiplier ** (maxLandRarities - rarity -1) * (1 ether);
 			}
 
-			if (commonHousePrices[landId] == 0) {
+			if (housePrices[landId] == 0) {
 				continue;
 			}
 
-			buildPrices[editionId][landId][0] = commonHousePrices[landId] * (1 ether);
-			buildPrices[editionId][landId][1] = commonHousePrices[landId] * buildingMultiplier * (1 ether);
+			buildPrices[editionId][landId][0] = housePrices[landId] * (1 ether);
+			buildPrices[editionId][landId][1] = housePrices[landId] * buildingMultiplier * (1 ether);
 		}
 	}
 }
