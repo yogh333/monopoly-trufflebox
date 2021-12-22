@@ -9,6 +9,7 @@ import Paris from "./data/Paris.json";
 import Grid from "./components/Grid";
 import User from "./components/User/User";
 import Land from "./components/Land/Land";
+import Staker from "./components/Staker";
 
 import BankJson from "./contracts/MonopolyBank.json";
 
@@ -28,6 +29,8 @@ function App() {
   });
 
   const [bankSC, setBankSC] = useState(null);
+	
+	const [staker, setStaker] = useState(false);
 
   async function connectWallet() {
     if (typeof window.ethereum !== "undefined") {
@@ -49,15 +52,24 @@ function App() {
         );
         setBankSC(bank);
         setConnect(
-          <Button variant="success" size="sm" disabled>
-            {window.ethereum.selectedAddress}
-          </Button>
+					<div>
+						<Button variant="success" size="sm" disabled>
+							{window.ethereum.selectedAddress}
+						</Button>
+						<Button variant="info" size="sm" onClick={stakeMode}>
+							STAKE
+						</Button>
+					</div>
         );
         setAddress(window.ethereum.selectedAddress);
         setProvider(p);
       }
     }
   }
+
+	function stakeMode(){
+		setStaker(true);
+	}
 
   async function displayInfo(cellID) {
     setVisual(<img className="land" src={Paris[cellID].visual} />);
@@ -87,29 +99,36 @@ function App() {
     }
   }
 
-  return (
-    <div className="App">
-      <div className="info-area-1">
-        <h2>User info</h2>
-        {connect}
-        {provider && <User eth_provider={provider} eth_address={address} />}
-      </div>
-      <div className="info-area-2">
-        <h2>Property Visual</h2>
-        {visual}
-      </div>
-      <div className="info-area-3">
-        <h2>Misc</h2>
-      </div>
-      <div className="info-area-4">
-        <h2>Property Info</h2>
-        {provider && <Land eth_provider={provider} land_info={landinfo} />}
-      </div>
-      <div className="main-area">
-        <Grid data={Paris} displayInfo={displayInfo} />
-      </div>
-    </div>
-  );
+	function displayStake(){
+			return(
+				<Staker/>
+			);
+	}
+	if(!staker)
+		return (
+			<div className="App">
+				<div className="info-area-1">
+					<h2>User info</h2>
+					{connect}
+					{provider && <User eth_provider={provider} eth_address={address} />}
+				</div>
+				<div className="info-area-2">
+					<h2>Property Visual</h2>
+					{visual}
+				</div>
+				<div className="info-area-3">
+					<h2>Misc</h2>
+				</div>
+				<div className="info-area-4">
+					<h2>Property Info</h2>
+					{provider && <Land eth_provider={provider} land_info={landinfo} />}
+				</div>
+				<div className="main-area">
+					<Grid data={Paris} displayInfo={displayInfo} />
+				</div>
+			</div>
+		);
+	return displayStake();
 }
 
 export default App;
