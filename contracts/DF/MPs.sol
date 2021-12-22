@@ -3,7 +3,7 @@ pragma solidity ^0.8.10;
 
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
-contract MPs is ERC20 {
+contract Rogue is ERC20 {
 
 	address private timonier;
 	address private forban;
