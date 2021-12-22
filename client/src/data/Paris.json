@@ -23,7 +23,7 @@
         "rent": [2,10,30,90,160,250],
         "group": [1, 1, 2],
         "house": 50,
-        "commonHousePrice": 1,
+        "housePrice": 1,
         "deFiMultiplier": 1,
         "visual": "./images/cell1.png"
     },
@@ -43,7 +43,7 @@
         "rent": [4,20,60,180,320,450],
         "group": [1, 2, 2],
         "house": 50,
-        "commonHousePrice": 1,
+        "housePrice": 1,
         "deFiMultiplier": 1,
         "visual": "./images/cell3.png"
     },
@@ -74,7 +74,7 @@
         "rent": [6,30,90,270,400,550],
         "group": [2, 1, 3],
         "house": 50,
-        "commonHousePrice": 1,
+        "housePrice": 1,
         "deFiMultiplier": 1.1,
         "visual": "./images/cell6.png"
     },
@@ -94,7 +94,7 @@
         "rent": [6,30,90,270,400,550],
         "group": [2, 2, 3],
         "house": 50,
-        "commonHousePrice": 1,
+        "housePrice": 1,
         "deFiMultiplier": 1.1,
         "visual": "./images/cell8.png"
     },
@@ -108,7 +108,7 @@
         "rent": [8,40,100,300,450,600],
         "group": [2, 3, 3],
         "house": 50,
-        "commonHousePrice": 1,
+        "housePrice": 1,
         "deFiMultiplier": 1.2,
         "visual": "./images/cell9.png"
     },
@@ -129,7 +129,7 @@
         "rent": [10,50,150,450,625,750],
         "group": [3, 1, 3],
         "house": 100,
-        "commonHousePrice": 1,
+        "housePrice": 1,
         "deFiMultiplier": 1.3,
         "visual": "./images/cell11.png"
     },
@@ -152,7 +152,7 @@
         "rent": [10,50,150,450,625,750],
         "group": [3, 2, 3],
         "house": 100,
-        "commonHousePrice": 1,
+        "housePrice": 1,
         "deFiMultiplier": 1.3,
         "visual": "./images/cell13.png"
     },
@@ -166,7 +166,7 @@
         "rent": [12,60,180,500,700,900],
         "group": [3, 3, 3],
         "house": 100,
-        "commonHousePrice": 1,
+        "housePrice": 1,
         "deFiMultiplier": 1.3,
         "visual": "./images/cell14.png"
     },
@@ -189,7 +189,7 @@
         "rent": [14,70,200,550,750,950],
         "group": [4, 1, 3],
         "house": 100,
-        "commonHousePrice": 1,
+        "housePrice": 1,
         "deFiMultiplier": 1.4,
         "visual": "./images/cell16.png"
     },
@@ -209,7 +209,7 @@
         "rent": [14,70,200,550,750,950],
         "group": [4, 2, 3],
         "house": 100,
-        "commonHousePrice": 1,
+        "housePrice": 1,
         "deFiMultiplier": 1.4,
         "visual": "./images/cell18.png"
     },
@@ -223,7 +223,7 @@
         "rent": [16,80,220,600,800,1000],
         "group": [4, 3, 3],
         "house": 100,
-        "commonHousePrice": 1,
+        "housePrice": 1,
         "deFiMultiplier": 1.4,
         "visual": "./images/cell19.png"
     },
@@ -244,7 +244,7 @@
         "rent": [18,90,250,700,875,1050],
         "group": [5, 1, 3],
         "house": 150,
-        "commonHousePrice": 1,
+        "housePrice": 1,
         "deFiMultiplier": 1.5,
         "visual": "./images/cell21.png"
     },
@@ -264,7 +264,7 @@
         "rent": [18,90,250,700,875,1050],
         "group": [5, 2, 3],
         "house": 150,
-        "commonHousePrice": 1,
+        "housePrice": 1,
         "deFiMultiplier": 1.5,
         "visual": "./images/cell23.png"
     },
@@ -278,7 +278,7 @@
         "rent": [20,100,300,750,925,1100],
         "group": [5, 3, 3],
         "house": 150,
-        "commonHousePrice": 1,
+        "housePrice": 1,
         "deFiMultiplier": 1.5,
         "visual": "./images/cell24.png"
     },
@@ -301,7 +301,7 @@
         "rent": [22,110,330,800,975,1150],
         "group": [6, 1, 3],
         "house": 150,
-        "commonHousePrice": 1,
+        "housePrice": 1,
         "deFiMultiplier": 1.6,
         "visual": "./images/cell26.png"
     },
@@ -315,7 +315,7 @@
         "rent": [22,110,330,800,975,1150],
         "group": [6, 2, 3],
         "house": 150,
-        "commonHousePrice": 1,
+        "housePrice": 1,
         "deFiMultiplier": 1.6,
         "visual": "./images/cell27.png"
     },
@@ -338,7 +338,7 @@
         "rent": [24,120,360,850,1025,1200],
         "group": [6, 3, 3],
         "house": 150,
-        "commonHousePrice": 1,
+        "housePrice": 1,
         "deFiMultiplier": 1.6,
         "visual": "./images/cell29.png"
     },
@@ -359,7 +359,7 @@
         "rent": [26,130,390,900,1100,1275],
         "group": [7, 1, 3],
         "house": 200,
-        "commonHousePrice": 1,
+        "housePrice": 1,
         "deFiMultiplier": 1.7,
         "visual": "./images/cell31.png"
     },
@@ -373,7 +373,7 @@
         "rent": [26,130,390,900,1100,1275],
         "group": [7, 2, 3],
         "house": 200,
-        "commonHousePrice": 1,
+        "housePrice": 1,
         "deFiMultiplier": 1.7,
         "visual": "./images/cell32.png"
     },
@@ -393,7 +393,7 @@
         "rent": [28,150,450,1000,1200,1400],
         "group": [7, 3, 3],
         "house": 200,
-        "commonHousePrice": 1,
+        "housePrice": 1,
         "deFiMultiplier": 1.7,
         "visual": "./images/cell34.png"
     },
@@ -422,7 +422,7 @@
         "rent": [35,175,500,1100,1300,1500],
         "group": [8, 1, 2],
         "house": 200,
-        "commonHousePrice": 1,
+        "housePrice": 1,
         "deFiMultiplier": 2,
         "visual": "./images/cell37.png"
     },
@@ -443,7 +443,7 @@
         "rent": [50,200,600,1400,1700,2000],
         "group": [8, 2, 2],
         "house": 200,
-        "commonHousePrice": 1,
+        "housePrice": 1,
         "deFiMultiplier": 2,
         "visual": "./images/cell39.png"
     }
