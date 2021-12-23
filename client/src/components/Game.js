@@ -13,15 +13,15 @@ import BankJson from "../contracts/MonopolyBank.json";
 import Spinner from "react-bootstrap/Spinner";
 
 function Game(props) {
-  const spinner = <Spinner as="span" animation="border" size="sm" />
+  const spinner = <Spinner as="span" animation="border" size="sm" />;
 
   const board = require(`../data/${boards[parseInt(props.edition_id)]}.json`);
 
-  const provider = props.provider
-  const networkId = props.network_id
-  const address = props.address
+  const provider = props.provider;
+  const networkId = props.network_id;
+  const address = props.address;
 
-  const [Bank, setBank] = useState(null)
+  const [Bank, setBank] = useState(null);
   const [visual, setVisual] = useState(<div>Property visual</div>);
   //const [currentLandId, setCurrentLandId] = useState(0);
   const [landInfo, setLandInfo] = useState({
@@ -30,8 +30,8 @@ function Game(props) {
     prices: { rare: "0", uncommon: "0", common: "0" },
     bprices: { house: "0", hotel: "0" },
   });
-  const [isReadyToRender, setIsReadyToRender] = useState(false)
-  const [isRetrievingInfo, setIsRetrievingInfo] = useState(false)
+  const [isReadyToRender, setIsReadyToRender] = useState(false);
+  const [isRetrievingInfo, setIsRetrievingInfo] = useState(false);
 
   useEffect(() => {
     /*if (window.ethereum && !window.ethereum.selectedAddress) { // Redirect to Home if disconnected
@@ -41,48 +41,62 @@ function Game(props) {
     }
 */
     if (!(provider && address && networkId)) {
-      return
+      return;
     }
 
-    setBank(new ethers.Contract(
-      BankJson.networks[networkId].address,
-      BankJson.abi,
-      provider.getSigner(address)
-    ))
-  }, [provider, address, networkId])
+    setBank(
+      new ethers.Contract(
+        BankJson.networks[networkId].address,
+        BankJson.abi,
+        provider.getSigner(address)
+      )
+    );
+  }, [provider, address, networkId]);
 
   useEffect(() => {
     if (!Bank) {
-      return
+      return;
     }
 
-    setIsReadyToRender(true)
-  }, [Bank])
+    setIsReadyToRender(true);
+  }, [Bank]);
 
   const retrieveCellPrices = async (editionId, cellID) => {
     console.log("get prices !");
 
     let propertiesPrices = [];
     for (let rarity = 0; rarity < board.maxLandRarities; rarity++) {
-      propertiesPrices[rarity] = await Bank.getPriceOfProp(editionId, cellID, rarity)
+      propertiesPrices[rarity] = await Bank.getPriceOfProp(
+        editionId,
+        cellID,
+        rarity
+      );
     }
 
-    const HOUSE = 0
-    const HOTEL = 1
-    let buildingsPrices = []
-    buildingsPrices[HOUSE] = await Bank.getPriceOfBuild(editionId, cellID, HOUSE)
-    buildingsPrices[HOTEL] = await Bank.getPriceOfBuild(editionId, cellID, HOTEL)
+    const HOUSE = 0;
+    const HOTEL = 1;
+    let buildingsPrices = [];
+    buildingsPrices[HOUSE] = await Bank.getPriceOfBuild(
+      editionId,
+      cellID,
+      HOUSE
+    );
+    buildingsPrices[HOTEL] = await Bank.getPriceOfBuild(
+      editionId,
+      cellID,
+      HOTEL
+    );
 
     return {
-      "properties": propertiesPrices,
-      "buildings": buildingsPrices
-    }
-  }
+      properties: propertiesPrices,
+      buildings: buildingsPrices,
+    };
+  };
 
   async function displayInfo(cellID) {
     setVisual(<img className="land" src={board.lands[cellID].visual} />);
     if (Bank != null) {
-      setIsRetrievingInfo(true)
+      setIsRetrievingInfo(true);
       const prices = await retrieveCellPrices(board.id, cellID);
       const land = {
         id: cellID,
@@ -98,12 +112,12 @@ function Game(props) {
         },
       };
       setLandInfo(land);
-      setIsRetrievingInfo(false)
+      setIsRetrievingInfo(false);
     }
   }
 
   if (!isReadyToRender) {
-    return (<>{spinner}</>)
+    return <>{spinner}</>;
   }
 
   return (
@@ -111,11 +125,7 @@ function Game(props) {
       <div className="info-area-1">
         <h2>User info</h2>
         {provider && (
-          <User
-            provider={provider}
-            address={address}
-            network_id={networkId}
-          />
+          <User provider={provider} address={address} network_id={networkId} />
         )}
       </div>
       <div className="info-area-2">
@@ -127,23 +137,21 @@ function Game(props) {
       </div>
       <div className="info-area-4">
         <h2>Property Info</h2>
-        { isRetrievingInfo
-          ? spinner
-          : <Land
-              land_info={landInfo}
-              bank_contract={Bank}
-              edition_id={props.edition_id}
-              address={address}
-              network_id={networkId}
-              provider={provider}
-            />
-        }
+        {isRetrievingInfo ? (
+          spinner
+        ) : (
+          <Land
+            land_info={landInfo}
+            bank_contract={Bank}
+            edition_id={props.edition_id}
+            address={address}
+            network_id={networkId}
+            provider={provider}
+          />
+        )}
       </div>
       <div className="main-area">
-        <Grid
-          board={board}
-          displayInfo={displayInfo}
-        />
+        <Grid board={board} displayInfo={displayInfo} />
       </div>
     </div>
   );
