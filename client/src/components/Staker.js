@@ -1,52 +1,104 @@
 
 import React, {useState, useEffect} from 'react';
-import Web3 from "web3";
+import Tairreux from "../contracts/Tairreux.json";
+import Rogue from "../contracts/Rogue.json";
+import User from "./User/User.js";
+import {ethers} from "ethers";
+import ObsBalance from "./ObsBalance";
 
-import CustomStaker from "./STAKER/CustomStaker.js"
-
-const getWeb3 = async () => {	new Promise((resolve, reject) => {
-  window.addEventListener("load", async () => {
-		const _web3 = await new Web3("http://localhost:8545");
-		const	_networkID = await _web3.eth.net.getId();
-		resolve(_web3);
-		});
-	});
-}
 
 const Staker = (props) => {
 
-	const [amount, setAmount] = useState(0);
-	const [web3, setWeb3] = useState(null);
-	const [balance, setBalance] = useState(0);
-	
-	var _networkID = null	
+	var drone = false;
+	var droneST = false;
 
-	const setter = async () => {
-		console.log("debug");
-	}
+	var address = window.ethereum.selectedAddress;
 
-	const _web3 = setter();
+	const [amount, setAmount] = useState("");
+	const [effective, setEffective] = useState(0);
+	const [deposit, setDeposit] = useState(0);
+
+	const provider = props.p;
 	
-	if(_web3)
-		return(
-			<div>
-				<div>
-					<p>lets go shut up fucking staker</p>
-				</div>
-				<div>
-					<output name="address">{"_address :" + window.ethereum.selectedAddress}</output>
-					<CustomStaker
-						amount={amount}
-						action={setAmount}
-						web3={web3}
-						update={setWeb3}
-						setBalance = {setBalance}
-					/>	
-				</div>
-			</div>
+	const MPs = new ethers.Contract(
+				Rogue.networks[1337].address,
+					Rogue.abi,
+					provider.getSigner()
 		);
 
-	return(<p>LOADED</p>);
+	const _networkID = 1337;
+
+  const stMPs = new ethers.Contract(
+	    Tairreux.networks[1337].address,
+		    Tairreux.abi,
+		    provider.getSigner()
+	);
+
+  useEffect(() => {
+
+		async function fetch() {
+			console.log("debug");
+		} 
+		fetch();
+	}, []);
+
+	return(
+		<div>
+			<div>
+				<p>lets go shut up fucking staker</p>
+			</div>
+			<div>
+				<User 
+					eth_provider = {provider}
+					eth_address = {address} />
+			</div>
+			<div>
+				<output name="address">{"_address :" + window.ethereum.selectedAddress}</output> 
+				<br></br>
+				<output> {"your deposit on contract " + deposit} </output>
+				<ObsBalance
+					text="coin on your wallet "
+					contract={MPs}
+					/>
+				<ObsBalance
+					text="your deposit on contract "
+					contract={stMPs}
+					/>
+				<br></br>
+				<input 
+					type="text" 
+					value= {amount}
+					id="amount"
+					onChange={(e) => {
+						console.log(e.target.value);
+						setAmount(e.target.value);} 
+					} />
+				<br></br>
+				<input
+					onClick={ async () => {
+						var _balance = await MPs.balanceOf(address);
+						setAmount(_balance.toNumber());
+						setEffective(_balance.toNumber());
+						}
+					}
+					type="button"
+					value="MAX"/>
+				<div>
+					<input
+						onClick={ async () => {
+								console.log(effective, amount)
+								if(amount ==effective){
+									await MPs.approve(stMPs.address, amount, {from:address});
+									stMPs.depositAll();
+								}
+							}
+						}
+						type="button"
+						value="Deposit"/>
+				</div>
+			</div>
+		</div>
+	);
 }
 
 export default Staker;
