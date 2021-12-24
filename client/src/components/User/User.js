@@ -5,7 +5,7 @@ import MonoJson from "../../contracts/MonopolyMono.json";
 import BankJson from "../../contracts/MonopolyBank.json";
 import PropJson from "../../contracts/MonopolyProp.json";
 import BuildJson from "../../contracts/MonopolyBuild.json";
-import BoardJson from "../../contracts/MonopolyBank.json";
+import BoardJson from "../../contracts/MonopolyBoard.json";
 
 import "./User.css";
 import Button from "react-bootstrap/Button";
@@ -68,6 +68,14 @@ export default function User(props) {
 
     if (BoardSC != null){
       alert ("You are rolling the dice");
+
+      const edition = await BoardSC.getMaxEdition();
+      console.log('edition: ', edition);
+
+      const nbLands = await BoardSC.getNbLands(edition);
+      console.log('nbLands: ', nbLands);
+
+      const nb = await BoardSC.getRandomNumber();
 
       //const nb = await BoardSC.getRandomNumber().call();
       //const nb = await BoardSC.getRandomNumber.call();
