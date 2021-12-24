@@ -17,20 +17,19 @@ export default function User(props) {
 	const [web3, setWeb3] = useState(false);
 
   const MonoSC = new ethers.Contract(
-    MonoJson.networks[1639998348801].address,
+    MonoJson.networks[1337].address,
     MonoJson.abi,
     provider.getSigner()
   );
 
   const PropSC = new ethers.Contract(
-    PropJson.networks[1639998348801].address,
+    PropJson.networks[1337].address,
     PropJson.abi,
     provider.getSigner()
   );
 
 	async function display(){
 		var bal = await MonoSC.balanceOf(address);
-		console.log("hoyyyyyyy",bal.toNumber());
 		setBalance(bal.toNumber());
 	}
 

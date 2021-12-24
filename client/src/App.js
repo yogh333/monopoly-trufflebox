@@ -16,6 +16,7 @@ import BankJson from "./contracts/MonopolyBank.json";
 function App() {
   const [visual, setVisual] = useState(<div>Property visual</div>);
   const [provider, setProvider] = useState(null);
+	const [networkID, setNetworkID] = useState(0);
   const [connect, setConnect] = useState(
     <Button variant="info" size="sm" onClick={connectWallet}>
       Connect
@@ -37,6 +38,7 @@ function App() {
       if (window.ethereum.isMetaMask) {
         await window.ethereum.request({ method: "eth_requestAccounts" });
         let p = await new ethers.providers.Web3Provider(window.ethereum);
+				let n = await p.getNetwork();
         window.ethereum.on("accountsChanged", (accounts) => {
           setAddress(accounts[0]);
           setConnect(
@@ -46,7 +48,7 @@ function App() {
           );
         });
         let bank = new ethers.Contract(
-          BankJson.networks["1639998348801"].address,
+          BankJson.networks["1337"].address,
           BankJson.abi,
           p.getSigner()
         );
@@ -63,6 +65,7 @@ function App() {
         );
         setAddress(window.ethereum.selectedAddress);
         setProvider(p);
+				setNetworkID(n);
       }
     }
   }
@@ -101,7 +104,12 @@ function App() {
 
 	function displayStake(){
 			return(
-				<Staker/>
+				<Staker
+					p={provider}
+					n={networkID}
+					start={connect}
+					ad={address}
+				/>
 			);
 	}
 	if(!staker)
