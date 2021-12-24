@@ -1,4 +1,4 @@
-import {useState, useEffect, useRef} from "react";
+import { useState, useEffect } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { ethers } from "ethers";
 
@@ -15,82 +15,74 @@ import PropJson from "../contracts/MonopolyProp.json";
 import BuildJson from "../contracts/MonopolyBuild.json";
 
 function Admin(props) {
-  const spinner = <Spinner as="span" animation="border" size="sm" />
+  const spinner = <Spinner as="span" animation="border" size="sm" />;
 
-  const provider = props.provider
-  const networkId = props.network_id
-  const address = props.address
+  const provider = props.provider;
+  const networkId = props.network_id;
+  const address = props.address;
 
-  const [Bank, setBank] = useState(null)
-  const [adminRole, setAdminRole] = useState(null)
-  const [isReadyToRender, setIsReadyToRender] = useState(false)
-
-  let lastAddress = null
+  const [Bank, setBank] = useState(null);
+  const [adminRole, setAdminRole] = useState(null);
+  const [isReadyToRender, setIsReadyToRender] = useState(false);
 
   useEffect(() => {
-    if (address) {
-      lastAddress = address
-    }
-
-    if (window.ethereum && !window.ethereum.selectedAddress) { // Redirect to Home if disconnected
-      window.location.href = "/"
-
-      return
-    }
+    setIsReadyToRender(false);
 
     if (!(provider && address && networkId)) {
-      return
+      return;
     }
 
-    setBank(new ethers.Contract(
-      BankJson.networks[networkId].address,
-      BankJson.abi,
-      provider.getSigner(address)
-    ))
+    setBank(
+      new ethers.Contract(
+        BankJson.networks[networkId].address,
+        BankJson.abi,
+        provider.getSigner(address)
+      )
+    );
   }, [provider, address, networkId]);
 
   useEffect(() => {
     if (!Bank) {
-      return
+      return;
     }
 
     Bank.ADMIN_ROLE().then((value) => {
-      setAdminRole(value)
-    })
+      setAdminRole(value);
+    });
   }, [Bank]);
 
   useEffect(() => {
     if (!(Bank && adminRole)) {
-      setIsReadyToRender(false)
+      setIsReadyToRender(false);
 
-      return
+      return;
     }
 
     Bank.hasRole(adminRole, address).then((value) => {
       if (!value) {
-        window.location.href = "/"
+        window.location.href = "/";
 
-        return
+        return;
       }
 
-      setIsReadyToRender(true)
-    })
-  }, [adminRole]);
+      setIsReadyToRender(true);
+    });
+  }, [adminRole, address]);
 
   async function sendPricesToBank() {
-    let commonLandPrices = []
-    let housePrices = []
+    let commonLandPrices = [];
+    let housePrices = [];
     Paris.lands.forEach((land, index) => {
-      commonLandPrices[index] = 0
-      if(land.hasOwnProperty('commonPrice')){
-        commonLandPrices[index] = land.commonPrice
+      commonLandPrices[index] = 0;
+      if (land.hasOwnProperty("commonPrice")) {
+        commonLandPrices[index] = land.commonPrice;
       }
 
-      housePrices[index] = 0
-      if(land.hasOwnProperty('housePrice')){
-        housePrices[index] = land.housePrice
+      housePrices[index] = 0;
+      if (land.hasOwnProperty("housePrice")) {
+        housePrices[index] = land.housePrice;
       }
-    })
+    });
 
     await Bank.setPrices(
       Paris.id,
@@ -100,7 +92,7 @@ function Admin(props) {
       Paris.buildingMultiplier,
       commonLandPrices,
       housePrices
-    )
+    );
   }
 
   async function setRoles() {
@@ -108,27 +100,31 @@ function Admin(props) {
       MonoJson.networks[networkId].address,
       MonoJson.abi,
       provider.getSigner(address)
-    )
+    );
     const Prop = new ethers.Contract(
       PropJson.networks[networkId].address,
       PropJson.abi,
       provider.getSigner(address)
-    )
+    );
     const Build = new ethers.Contract(
       BuildJson.networks[networkId].address,
       BuildJson.abi,
       provider.getSigner(address)
-    )
+    );
 
-    const ADMIN_ROLE = await Prop.ADMIN_ROLE()
-    const MINTER_ROLE = await Prop.MINTER_ROLE()
+    const ADMIN_ROLE = await Prop.ADMIN_ROLE();
+    const MINTER_ROLE = await Prop.MINTER_ROLE();
 
-    Prop.grantRole(MINTER_ROLE, BankJson.networks[networkId].address).then((result) => console.log("minter role granted"))
-    Build.grantRole(MINTER_ROLE, BankJson.networks[networkId].address).then((result) => console.log("minter role granted"))
+    Prop.grantRole(MINTER_ROLE, BankJson.networks[networkId].address).then(
+      (result) => console.log("minter role granted")
+    );
+    Build.grantRole(MINTER_ROLE, BankJson.networks[networkId].address).then(
+      (result) => console.log("minter role granted")
+    );
   }
 
   if (!isReadyToRender) {
-    return (<></>)
+    return <></>;
   }
 
   return (
