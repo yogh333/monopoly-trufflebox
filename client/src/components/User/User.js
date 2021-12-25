@@ -19,7 +19,7 @@ export default function User(props) {
   const [prop, setProp] = useState(0);
 
   /*
-  const [rollDice] = useState(
+  const [rollDiceButton] = useState(
       <Button type='submit' variant="danger" size="sm" className='btn btn-primary btn-lg btn-block' onClick={rollDiceFunction}>
         Roll the dice!
       </Button>
@@ -64,7 +64,7 @@ export default function User(props) {
   });
 
   /**
-   * name: rollDice
+   * name: rollDiceFunction
    * description: simulate the roll of dice to move the game forward
    * @returns {Promise<void>}
    */
