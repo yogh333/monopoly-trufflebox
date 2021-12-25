@@ -18,11 +18,15 @@ export default function User(props) {
   const [balance, setBalance] = useState("?");
   const [prop, setProp] = useState(0);
 
+  /*
   const [rollDice] = useState(
       <Button type='submit' variant="danger" size="sm" className='btn btn-primary btn-lg btn-block' onClick={rollDiceFunction}>
         Roll the dice!
       </Button>
   );
+  */
+
+  const [rollDice, setRollDice] = useState(2);
 
   const MonoSC = new ethers.Contract(
     MonoJson.networks[networkId].address,
@@ -53,7 +57,7 @@ export default function User(props) {
     MonoSC.balanceOf(address).then((value) =>
       setBalance(ethers.utils.formatUnits(value))
     );
-  });
+  }, []);
 
   useEffect(() => {
     PropSC.balanceOf(address).then((value) => setProp(value.toNumber()));
@@ -67,7 +71,12 @@ export default function User(props) {
   async function rollDiceFunction(){
 
     if (BoardSC != null){
-      alert ("You are rolling the dice");
+      //alert ("You are rolling the dice");
+
+      const  newValue = Math.floor(Math.random() * 6 + 1);
+
+      console.log('newValue: ', newValue );
+      setRollDice(newValue);
 
       const edition = await BoardSC.getMaxEdition();
       console.log('edition: ', edition);
@@ -75,7 +84,17 @@ export default function User(props) {
       const nbLands = await BoardSC.getNbLands(edition);
       console.log('nbLands: ', nbLands);
 
-      const nb = await BoardSC.getRandomNumber();
+      //display of dices
+      let diceImage;
+      diceImage = (
+          <img
+            className="dice"
+            src={require(`../../data/diceFaces/dice_face_${newValue}.png`)}
+            alt="dice display"
+          />
+      );
+
+      //const nb = await BoardSC.getRandomNumber();
 
       //const nb = await BoardSC.getRandomNumber().call();
       //const nb = await BoardSC.getRandomNumber.call();
