@@ -1,11 +1,9 @@
 import {useState, useEffect} from "react";
 import {ethers} from "ethers";
-import Dice from "./../Dice/Dice"
 
 import MonoJson from "../../contracts/MonopolyMono.json";
 import BankJson from "../../contracts/MonopolyBank.json";
 import PropJson from "../../contracts/MonopolyProp.json";
-import BuildJson from "../../contracts/MonopolyBuild.json";
 import BoardJson from "../../contracts/MonopolyBoard.json";
 
 import "./User.css";
@@ -59,67 +57,73 @@ export default function User(props) {
 
     /**
      * name: rollDiceFunction
-     * description: simulate the roll of dice to move the game forward
+     * description: simulates the roll of dice to move the game forward and to move on the pawn
      * @returns {Promise<void>}
      */
     async function rollDiceFunction() {
         if (BoardSC == null) return;
-        //alert ("You are rolling the dice");
 
+        //TODO: Replace by the call at the oracle
         const generateNewNumber = () => Math.floor(Math.random() * 6 + 1);
-        //const [newValue1, newValue2] = [null,null].map(generateNewNumber)
+
         const newValue1 = generateNewNumber();
         const newValue2 = generateNewNumber();
 
         console.log({rollDice})
 
-        // const total = rollDice[0] + rollDice[1];
         const total = calculateTotal(newValue1, newValue2)
         handleNewPosition(currentPosition, total);
-        console.log({total});
+        console.log('total:', {total});
         setRollDice([newValue1, newValue2]);
 
-        const edition = await BoardSC.getMaxEdition();
-        console.log('edition: ', edition);
-
-        const nbLands = await BoardSC.getNbLands(edition);
-        console.log('nbLands: ', nbLands);
     }
 
+    /**
+     * name: handleNewPosition
+     * description: make all the operations to determine and to display the new position of the future pawn
+     * @param previousPosition
+     * @param total
+     */
     function handleNewPosition(previousPosition, total){
         const newCell = previousPosition + total;
-        if (newCell >= 40) return;
-        highlightCurrentCell(newCell)
-        setCurrentPosition(newCell)
-        forgetPreviousPosition(previousPosition)
-        }
 
-    function forgetPreviousPosition(previousPosition) {
-    document.getElementById(`cell-${previousPosition}`).classList.remove("active")
+        //TODO: to define more accurately
+        if (newCell >= 40) return;
+        highlightCurrentCell(newCell);
+        setCurrentPosition(newCell);
+        forgetPreviousPosition(previousPosition);
     }
 
+    /**
+     * name: forgetPreviousPosition
+     * description: allows to remove the highlighting of the cell of the previous sum of the dice
+     * @param previousPosition
+     */
+    function forgetPreviousPosition(previousPosition) {
+        document.getElementById(`cell-${previousPosition}`).classList.remove("active");
+    }
+
+    /**
+     * name: highlightCurrentCell
+     * description: highlight the cell which is the result of the sum of the dice
+     * @param total
+     */
     function highlightCurrentCell(total){
         const activeCell = document.getElementById(`cell-${total}`);
-        activeCell.classList.add("active")
+        activeCell.classList.add("active");
     }
 
+    /**
+     * name: calculateTotal
+     * description: calculate the sum of the results of the dice
+     * @param args
+     * @returns {*}
+     */
     function calculateTotal(...args){
-        console.log({args})
-        //console.log({num1, num2})
+        console.log({args});
+        //sum the parameters
         return args.reduce((total, current) => total + current,0);
-
     }
-
-
-    //const nb = await BoardSC.getRandomNumber();
-
-    //const nb = await BoardSC.getRandomNumber().call();
-    //const nb = await BoardSC.getRandomNumber.call();
-
-    //const { accounts, contract } = this.state;
-    //await contract.methods.getRandomNumber().send({from:accounts[0]});
-    //await contract.methods.fulfillRandomness().send({from:accounts[0]});
-
 
     return (
         <div>
@@ -131,25 +135,32 @@ export default function User(props) {
                 Roll the dice!
             </Button>
 
+
+
             <div>
                 {rollDice[0]}
                 {rollDice[1]}
 
+                {/* first dice display */}
                 <img
                     className="dice"
                     src={require(`../../../build/images/dice_face_${rollDice[0]}.png`).default}
                     alt="dice display"
+                    style={{ }}
                 />
 
+                {/* second dice display */}
                 <img
                     className="dice"
                     src={require(`../../../build/images/dice_face_${rollDice[1]}.png`).default}
                     alt="dice display"
                 />
-
-
-
             </div>
+
+
+
+
+
 
         </div>
     );

@@ -84,6 +84,26 @@ contract MonopolyBoard is AccessControl {
 		b.buildType = 1;
 	}
 
+	/**
+     * @notice Requests randomness
+     * @return requestId the id of the request for the oracle
+     */
+	function getRandomNumber() public returns (bytes32 requestId) {
+		require(LINK.balanceOf(address(this)) >= fee, "Not enough LINK - fill contract with faucet");
+		return requestRandomness(keyHash, fee);
+	}
+
+	/**
+     * @notice Callback function used by VRF Coordinator
+     * @param requestId the id of the request for the oracle
+     * @param randomness randomness must be requested from an oracle, which generates a number and a cryptographic proof
+     */
+	function fulfillRandomness(bytes32 requestId, uint256 randomness) internal override {
+		randomResult = randomness % 6 + 1;
+
+		emit GenerateRandomResult(randomResult);
+	}
+
 	function isBuildingLand(uint16 edition, uint8 land) external view returns (bool) {
 		return boards[edition].isBuildingLand[land];
 	}
