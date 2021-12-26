@@ -35,7 +35,7 @@ contract MonopolyBuild is ERC1155Supply, AccessControl {
 	}
 
 	mapping(uint256 => Build) private builds;
-	uint256[] private buildIDs;
+	mapping(uint16 => mapping (uint8 => uint256[])) buildIdByLandByEdition;
 
 	constructor(address board_address, string memory _uri) ERC1155(_uri) {
 		_setupRole(ADMIN_ROLE, msg.sender);
@@ -77,13 +77,6 @@ contract MonopolyBuild is ERC1155Supply, AccessControl {
 		return super.supportsInterface(_interfaceId);
 	}
 
-	function totalID() public view returns (uint256) {
-		return buildIDs.length;
-	}
-
-	function getIDByIndex(uint256 _index) public view returns (uint256) {
-		return buildIDs[_index];
-	}
 
 	function generateID(
 		uint16 _edition,
@@ -93,7 +86,7 @@ contract MonopolyBuild is ERC1155Supply, AccessControl {
 		id_ = uint256(keccak256(abi.encode(_edition, _land, _buildType)));
 
 		if (!exists(id_)) {
-			buildIDs.push(id_);
+			buildIdByLandByEdition[_edition][_land].push(id_);
 			builds[id_] = Build(_edition, _land, _buildType);
 		}
 	}

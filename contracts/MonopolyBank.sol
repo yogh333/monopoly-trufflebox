@@ -167,30 +167,31 @@ contract MonopolyBank is AccessControl, IERC721Receiver {
 		return this.onERC721Received.selector;
 	}
 
+	// is it really useful ???
 	function setPrices(
-		uint16 editionId,
-		uint8 maxLands,
-		uint8 maxLandRarities,
-		uint16 rarityMultiplier,
-		uint16 buildingMultiplier,
-		uint256[] calldata commonLandPrices,
-		uint256[] calldata housePrices
+		uint16 _editionId,
+		uint8 _maxLands,
+		uint8 _maxLandRarities,
+		uint16 _rarityMultiplier,
+		uint16 _buildingMultiplier,
+		uint256[] calldata _commonLandPrices,
+		uint256[] calldata _buildPrices
 	) external onlyRole(ADMIN_ROLE) {
-		for (uint8 landId = 0; landId < maxLands; landId++) {
-			if (commonLandPrices[landId] == 0) {
+		for (uint8 landId = 0; landId < _maxLands; landId++) {
+			if (_commonLandPrices[landId] == 0) {
 				continue;
 			}
 
-			for (uint8 rarity = 0; rarity < maxLandRarities; rarity++) {
-				propPrices[editionId][landId][rarity] = commonLandPrices[landId] * rarityMultiplier ** (maxLandRarities - rarity -1) * (1 ether);
+			for (uint8 rarity = 0; rarity < _maxLandRarities; rarity++) {
+				propPrices[_editionId][landId][rarity] = _commonLandPrices[landId] * _rarityMultiplier ** (_maxLandRarities - rarity -1) * (1 ether);
 			}
 
-			if (housePrices[landId] == 0) {
+			if (_buildPrices[landId] == 0) {
 				continue;
 			}
 
-			buildPrices[editionId][landId][0] = housePrices[landId] * (1 ether);
-			buildPrices[editionId][landId][1] = housePrices[landId] * buildingMultiplier * (1 ether);
+			buildPrices[_editionId][landId][0] = _buildPrices[landId] * (1 ether);
+			buildPrices[_editionId][landId][1] = _buildPrices[landId] * _buildingMultiplier * (1 ether);
 		}
 	}
 }
