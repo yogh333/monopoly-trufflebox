@@ -64,6 +64,13 @@ export default function User(props) {
         if (BoardSC == null) return;
 
         //TODO: Replace by the call at the oracle
+        const getRandomNumber = await BoardSC.getRandomNumber();
+        console.log('getRandomNumber(): ', getRandomNumber);
+
+
+
+        //Generates a random number by JS
+        /*
         const generateNewNumber = () => Math.floor(Math.random() * 6 + 1);
 
         const newValue1 = generateNewNumber();
@@ -75,6 +82,7 @@ export default function User(props) {
         handleNewPosition(currentPosition, total);
         console.log('total:', {total});
         setRollDice([newValue1, newValue2]);
+        */
 
     }
 
@@ -137,30 +145,27 @@ export default function User(props) {
 
 
 
-            <div>
-                {rollDice[0]}
-                {rollDice[1]}
+            <div className='mt-3 ml-150'>
 
                 {/* first dice display */}
                 <img
-                    className="dice"
+                    className='dice-display'
                     src={require(`../../../build/images/dice_face_${rollDice[0]}.png`).default}
                     alt="dice display"
-                    style={{ }}
-                />
 
-                {/* second dice display */}
-                <img
-                    className="dice"
-                    src={require(`../../../build/images/dice_face_${rollDice[1]}.png`).default}
-                    alt="dice display"
                 />
             </div>
 
+            <div className='mt-3 ml-150'>
 
+                {/* second dice display */}
+                <img
+                    className='dice-display'
+                    src={require(`../../../build/images/dice_face_${rollDice[1]}.png`).default}
+                    alt="dice display"
+                />
 
-
-
+            </div>
 
         </div>
     );

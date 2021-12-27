@@ -17,15 +17,11 @@
  * phrase from a file you've .gitignored so it doesn't accidentally become public.
  *
  */
-
-// const HDWalletProvider = require('@truffle/hdwallet-provider');
-//
-// const fs = require('fs');
-// const mnemonic = fs.readFileSync(".secret").toString().trim();
-const path = require("path");
-
 const HDWalletProvider = require('@truffle/hdwallet-provider');
 const fs = require('fs');
+const path = require("path");
+require("dotenv").config();
+
 
 module.exports = {
   /**
@@ -49,14 +45,8 @@ module.exports = {
       host: "127.0.0.1", // Localhost (default: none)
       port: 8545, // Standard Ethereum port (default: none)
       network_id: "*", // Any network (default: none)
-    },
-    matic: {
-      provider: () => new HDWalletProvider(mnemonic, `https://rpc-mumbai.maticvigil.com`),
-      network_id: 80001,
-      confirmations: 2,
-      timeoutBlocks: 200,
-      skipDryRun: true
-    },
+    }
+
     // Another network with more advanced options...
     // advanced: {
     // port: 8777,             // Custom port
