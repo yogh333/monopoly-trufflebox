@@ -20,7 +20,6 @@ contract MonopolyBank is AccessControl, IERC721Receiver {
 
 	// price_by_rarity_by_land_by_edition (prop token)
 	mapping(uint16 => mapping(uint8 => mapping(uint8 => uint256))) propPrices;
-
 	// price_by_buildtype_by_land_by_edition (build token)
 	mapping(uint16 => mapping(uint8 => mapping(uint8 => uint256))) buildPrices;
 
@@ -167,7 +166,6 @@ contract MonopolyBank is AccessControl, IERC721Receiver {
 		return this.onERC721Received.selector;
 	}
 
-	// is it really useful ???
 	function setPrices(
 		uint16 _editionId,
 		uint8 _maxLands,
@@ -193,5 +191,38 @@ contract MonopolyBank is AccessControl, IERC721Receiver {
 			buildPrices[_editionId][landId][0] = _buildPrices[landId] * (1 ether);
 			buildPrices[_editionId][landId][1] = _buildPrices[landId] * _buildingMultiplier * (1 ether);
 		}
+	}
+
+	/**
+	 * @notice Transfer property ERC721 and royalties to receiver. Useful for our Marketplace
+	 * @dev
+	 * @param _from the seller
+	 * @param _to the buyer
+	 * @param _tokenId the Property token id
+	 * @param _salePrice the sale price
+	 */
+	function propertyTransfer(
+		address _from,
+		address _to,
+		uint256 _tokenId,
+		uint256 _salePrice
+	) external onlyRole(BANKER_ROLE) {
+		require (monopolyPROP.isApprovedForAll(_from, address(this)), "Contract is not allowed");
+		address receiver;
+		uint256 royaltyAmount;
+		(receiver, royaltyAmount) = monopolyPROP.royaltyInfo(_tokenId, _salePrice);
+
+		// Ajout du prix de la transaction en gas => oracle ? ou estimation large ?
+		require(monopolyMONO.balanceOf(_to) > _salePrice, "Not sufficient token balance");
+
+		require(monopolyMONO.transferFrom(_to, _from, _salePrice));
+
+		if (receiver != address(0) && royaltyAmount > 0) {
+			if (receiver != monopolyPROP.ownerOf(_tokenId)) { // royalties receiver pay nothing
+				monopolyMONO.transferFrom(_from, receiver, royaltyAmount); // pay royalties
+			}
+		}
+
+		monopolyPROP.safeTransferFrom(_from, _to, _tokenId);
 	}
 }
