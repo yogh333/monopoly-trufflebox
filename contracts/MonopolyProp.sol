@@ -22,6 +22,15 @@ struct Prop {
 	uint32 serial;
 }
 
+/**
+ * @notice
+ * @dev Royalties: support royalties implementation with method royaltyInfo() from IERC2981 (see interface declaration at supportsInterface function),
+ * inherit from Ownable for Opensea Marketplace
+ * and getRaribleV2Royalties method for Rarible Marketplace.
+ *
+ *
+ *
+ */
 contract MonopolyProp is ERC721Enumerable, AccessControl, Ownable, RoyaltiesV2Impl {
 	bytes32 public constant ADMIN_ROLE = keccak256("ADMIN_ROLE");
 	bytes32 public constant MINTER_ROLE = keccak256("MINTER_ROLE");
