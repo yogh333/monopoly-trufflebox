@@ -1,3 +1,5 @@
+Paris = require("../client/src/data/Paris.json");
+
 const MonopolyPawn = artifacts.require("MonopolyPawn");
 const MonopolyMono = artifacts.require("MonopolyMono");
 const MonopolyBoard = artifacts.require("MonopolyBoard");
@@ -44,8 +46,51 @@ module.exports = async function (deployer, network, accounts) {
     MonopolyMonoInstance.address
   );
 
+  const MonopolyBankInstance = await MonopolyBank.deployed();
+
+  // Setup roles
+  // Bank mint Prop & Build
+  const MINTER_ROLE = await MonopolyPropInstance.MINTER_ROLE()
+  await MonopolyPropInstance.grantRole(MINTER_ROLE, MonopolyBankInstance.address, { "from": accounts[0] })
+  await MonopolyBuildInstance.grantRole(MINTER_ROLE, MonopolyBankInstance.address, { "from": accounts[0] })
+
+  // initialize Paris board prices
+  let commonLandPrices = []
+  let housePrices = []
+  Paris.lands.forEach((land, index) => {
+    commonLandPrices[index] = 0
+    if(land.hasOwnProperty('commonPrice')){
+      commonLandPrices[index] = land.commonPrice
+    }
+
+    housePrices[index] = 0
+    if(land.hasOwnProperty('housePrice')){
+      housePrices[index] = land.housePrice
+    }
+  })
+
+  await MonopolyBankInstance.setPrices(
+    Paris.id,
+    Paris.maxLands,
+    Paris.maxLandRarities,
+    Paris.rarityMultiplier,
+    Paris.buildingMultiplier,
+    commonLandPrices,
+    housePrices,
+    { "from": accounts[0] }
+  );
+
+  const amount = web3.utils.toWei("1000", "ether")
+
   await MonopolyMonoInstance.mint(
     accounts[1],
-    web3.utils.toWei("1000", "ether")
+    amount
   );
+
+  // Give allowance to contract to spend all $MONO
+  await MonopolyMonoInstance.approve(
+    MonopolyBankInstance.address,
+    amount,
+    { "from": accounts[1] }
+  )
 };
