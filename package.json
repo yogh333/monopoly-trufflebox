@@ -21,7 +21,7 @@
   },
   "homepage": "https://github.com/jcaporossi/monopoly-smartcontracts#readme",
   "dependencies": {
-    "@chainlink/contracts": "^0.2.2",
+    "@chainlink/contracts": "0.2.2",
     "@openzeppelin/contracts": "^4.3.2",
     "@truffle/hdwallet-provider": "^2.0.0"
   },
