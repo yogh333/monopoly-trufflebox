@@ -41,6 +41,8 @@ module.exports = async function (deployer, network, accounts) {
 
   await deployer.deploy(
     MonopolyBank,
+    MonopolyPawnInstance.address,
+    MonopolyBoardInstance.address,
     MonopolyPropInstance.address,
     MonopolyBuildInstance.address,
     MonopolyMonoInstance.address

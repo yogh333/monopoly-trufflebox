@@ -7,7 +7,8 @@
     "test": "test"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "deploy": "truffle deploy",
+    "test": "truffle test"
   },
   "repository": {
     "type": "git",

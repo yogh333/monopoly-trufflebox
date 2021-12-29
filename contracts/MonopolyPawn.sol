@@ -11,7 +11,17 @@ contract MonopolyPawn is ERC721Enumerable, AccessControl {
 
 	string private baseTokenURI;
 
-	mapping(address => uint256) playerTopawn;
+	struct Pawn {
+		uint8 subject; /* car, thimble, hat, ship, shoe, wheelbarrow, dog, cat */
+		uint8 background; /* blanc, noir, bleu, rouge, vert, jaune, bleu clair, violet, arc-en-ciel */
+		uint8 material; /* carton, bois, plastique, cuivre, plomb, étain, argent, palladium, platine, or */
+		uint8 halo; /* aucun, bleu électrique, jaune solaire, pure blanc, vert plasma, psycho arc-en-ciel, fusion flou */
+		uint8 power; /* aucun, monopole, anarchiste, politicien, avocat, juge, banquier, médias, startuper, star, CEO */
+		uint8 level;
+		uint8 xp;
+	}
+
+	mapping(uint256 => Pawn) private pawns;
 
 	constructor(
 		string memory _name,
@@ -39,13 +49,23 @@ contract MonopolyPawn is ERC721Enumerable, AccessControl {
 	}
 
 	function mint(address _to) external onlyRole(MINTER_ROLE) returns (uint256 id_) {
-		require(playerTopawn[_to] == 0, "player already owns a pawn");
+		require(balanceOf(_to) == 0, "player already owns a pawn");
 
-		id_ = generateID(_to);
+		Pawn memory p;
+		uint8 r = random(msg.sender);
+		p.subject = r % 8;
+		p.background = r % 10;
+		p.material = r % 10;
+		p.halo = r % 7;
+		p.power = r % 11;
+		p.level = 0;
+		p.xp = 0;
 
-		playerTopawn[_to] = id_;
+		id_ = generateID(p);
 
 		_safeMint(_to, id_);
+
+		pawns[id_] = p;
 	}
 
 	function supportsInterface(bytes4 _interfaceId)
@@ -57,13 +77,22 @@ contract MonopolyPawn is ERC721Enumerable, AccessControl {
 		return super.supportsInterface(_interfaceId);
 	}
 
-	/*function get(uint256 _id) public view returns (Prop memory p_) {
-		require(exists(_id), "This property does not exist");
+	function get(uint256 _id) public view returns (Pawn memory p_) {
+		require(_exists(_id), "This pawn does not exist");
 
-		p_ = props[_id];
-	}*/
+		p_ = pawns[_id];
+	}
 
-	function generateID(address player) internal view returns (uint256 id_) {
-		return uint256(keccak256(abi.encodePacked(block.difficulty, block.timestamp, player)));
+	function generateID(Pawn memory _p) internal pure returns (uint256 id_) {
+		return
+			uint256(
+				keccak256(abi.encodePacked(_p.subject, _p.background, _p.material, _p.halo, _p.power, _p.level, _p.xp))
+			);
+	}
+
+	/// @dev pseudo-random function
+	/// @return a random value in between [0, type(uint8).max]
+	function random(address user) internal view returns (uint8) {
+		return uint8(uint256(keccak256(abi.encodePacked(block.difficulty, block.timestamp, user))) % type(uint8).max);
 	}
 }

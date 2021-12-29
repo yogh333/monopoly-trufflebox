@@ -1,7 +1,10 @@
 build
 client/src/contracts
-
 node_modules
-
 #ide
 .idea
+migrations
+truffle-config.js
+node_modules
+build/
+client/src/contracts/
