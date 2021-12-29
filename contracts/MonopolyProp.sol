@@ -5,9 +5,7 @@ pragma solidity ^0.8.0;
 import "@openzeppelin/contracts/access/AccessControl.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
-import "./@rarible/royalties/contracts/impl/RoyaltiesV2Impl.sol";
-import "./@rarible/royalties/contracts/LibPart.sol";
-import "./@rarible/royalties/contracts/LibRoyaltiesV2.sol";
+import "@openzeppelin/contracts/interfaces/IERC2981.sol";
 
 import "./MonopolyBoard.sol";
 
@@ -24,14 +22,18 @@ struct Prop {
 
 /**
  * @notice
- * @dev Royalties: support royalties implementation with method royaltyInfo() from IERC2981 (see interface declaration at supportsInterface function),
- * inherit from Ownable for Opensea Marketplace
- * and getRaribleV2Royalties method for Rarible Marketplace.
+ * @dev
+ * Royalties: Only some addresses are allowed to transfer these tokens (see isApprovedForAll() method and map isContractAllowed).
+ * Token owner can't resell is token outside an authorized Marketplace or directly to another address.
+ * support royalties implementation with method royaltyInfo() from ERC2981 (see interface declaration at supportsInterface function),
+ * inherit from Ownable to support Opensea Marketplace
+ * and add getRaribleV2Royalties method to support Rarible Marketplace.
  *
  *
  *
  */
-contract MonopolyProp is ERC721Enumerable, AccessControl, Ownable, RoyaltiesV2Impl {
+contract MonopolyProp is ERC721Enumerable, AccessControl, Ownable, IERC2981 {
+
 	bytes32 public constant ADMIN_ROLE = keccak256("ADMIN_ROLE");
 	bytes32 public constant MINTER_ROLE = keccak256("MINTER_ROLE");
 
@@ -39,27 +41,21 @@ contract MonopolyProp is ERC721Enumerable, AccessControl, Ownable, RoyaltiesV2Im
 
 	MonopolyBoard private immutable board;
 
-	function isValidProp(
-		uint16 edition,
-		uint8 land,
-		uint8 rarity
-	) public view returns (bool) {
-		return
-			(edition <= board.getMaxEdition()) &&
-			(land <= board.getNbLands(edition)) &&
-			(board.isBuildingLand(edition, land)) &&
-			(rarity <= board.getRarityLevel(edition));
-	}
-
 	mapping(uint256 => Prop) private props;
 	// Number of minted properties for each (edition, land, rarity) tuple
 	mapping(uint16 => mapping(uint8 => mapping(uint8 => uint16))) numOfProps;
 
 	// Bank contract allowance must be set in migration
 	// and 0x58807baD0B376efc12F5AD86aAc70E78ed67deaE OpenSea's ERC721 Proxy Address
-	mapping(address => bool) isContractAllowed;
+	mapping(address => bool) public isOperatorAllowed;
+
+	mapping(uint256 => uint96) private royaltiesValuesByTokenId;
 
 	string private baseTokenURI;
+
+	uint96 public defaultRoyaltyPercentageBasisPoints = 500; // 5%
+
+	event RoyaltySet(uint256 tokenId, uint256 royaltyPercentageBasisPoints);
 
 	constructor(
 		address board_address,
@@ -77,6 +73,19 @@ contract MonopolyProp is ERC721Enumerable, AccessControl, Ownable, RoyaltiesV2Im
 		board = MonopolyBoard(board_address);
 	}
 
+	function isValidProp(
+		uint16 edition,
+		uint8 land,
+		uint8 rarity
+	) public view returns (bool) {
+		return
+			(edition <= board.getMaxEdition()) &&
+			(land <= board.getNbLands(edition)) &&
+			(board.isBuildingLand(edition, land)) &&
+			(rarity <= board.getRarityLevel(edition))
+		;
+	}
+
 	function _baseURI() internal view override returns (string memory) {
 		return baseTokenURI;
 	}
@@ -89,6 +98,14 @@ contract MonopolyProp is ERC721Enumerable, AccessControl, Ownable, RoyaltiesV2Im
 		return string(abi.encodePacked(uri, ext));
 	}
 
+	/** Mint NFT token and set royalties default value
+	 * Requirements :
+	 * 	- Property must be valid
+	 * @param _to buyer address
+	 * @param _edition board edition
+	 * @param _land land id
+	 * @param _rarity rarity
+     */
 	function mint(
 		address _to,
 		uint16 _edition,
@@ -99,6 +116,7 @@ contract MonopolyProp is ERC721Enumerable, AccessControl, Ownable, RoyaltiesV2Im
 		id_ = generateID(_edition, _land, _rarity);
 
 		_safeMint(_to, id_);
+		_setRoyalties(id_);
 	}
 
 	function get(uint256 _id) public view returns (Prop memory p_) {
@@ -127,13 +145,9 @@ contract MonopolyProp is ERC721Enumerable, AccessControl, Ownable, RoyaltiesV2Im
 	function supportsInterface(bytes4 _interfaceId)
 		public
 		view
-		override(ERC721Enumerable, AccessControl)
+		override(ERC721Enumerable, AccessControl, IERC165)
 		returns (bool)
 	{
-		if (_interfaceId == LibRoyaltiesV2._INTERFACE_ID_ROYALTIES) {
-			return true;
-		}
-
 		if (_interfaceId == _INTERFACE_ID_ERC2981) {
 			return true;
 		}
@@ -156,27 +170,61 @@ contract MonopolyProp is ERC721Enumerable, AccessControl, Ownable, RoyaltiesV2Im
 		props[id_] = Prop(_edition, _land, _rarity, serial);
 	}
 
-	/*function setRoyalties(
-		int256 _tokenId,
-		address payable _royaltiesRecipientAddress,
-		uint96 _percentageBasisPoints
-	) public onlyOwner {
-		LibPart.part[] memory _royalties = new LibPart.part[](1);
-		_royalties[0].value = _percentageBasisPoints;
-		_royalties[0].account = _royaltiesRecipientAddress;
-		_saveRoyalties(_tokenId, _royalties);
-	}*/
+	/** Set default royalties percentage basis point. Can be only made by admin role.
+	 * @param _percentageBasisPoints royalties percentage basis point i.e. 500 = 5%
+     */
+	function setDefaultRoyaltyPercentageBasisPoints(uint96 _percentageBasisPoints) public onlyRole(ADMIN_ROLE) {
+		defaultRoyaltyPercentageBasisPoints = _percentageBasisPoints;
+	}
 
+	/** Set royalties for a NFT token id at percentage basis point. Can be only made by admin role.
+	 * @param _tokenId NFT token id
+     * @param _percentageBasisPoints royalties percentage basis point i.e. 500 = 5%
+     */
 	function setRoyalties(
 		uint256 _tokenId,
 		uint96 _percentageBasisPoints
 	) public onlyRole(ADMIN_ROLE) {
-		LibPart.Part[] memory _royalties = new LibPart.Part[](1); // Royalties receiver is unique
-		_royalties[0].value = _percentageBasisPoints;
-		_royalties[0].account = payable(owner()); // unique royalties receiver is contract owner
-		_saveRoyalties(_tokenId, _royalties);
+		_setRoyalties(_tokenId, _percentageBasisPoints);
 	}
 
+	/** @dev Set royalties for a NFT token id at default percentage basis point.
+	 * default value should be set with this.setDefaultRoyaltyPercentageBasisPoints
+	 * @param _tokenId NFT token id
+     * @dev See this._setRoyalties(uint256 _tokenId, uint96 _percentageBasisPoints)
+     */
+	function _setRoyalties(
+		uint256 _tokenId
+	) internal {
+		_setRoyalties(_tokenId, defaultRoyaltyPercentageBasisPoints);
+	}
+
+	/** Set royalties for a NFT token id at a percentage basis point. Assuming that royalties receiver is contract's owner
+	 * @param _tokenId NFT token id
+	 * @param _percentageBasisPoints royalties percentage basis point i.e. 500 = 5%
+     */
+	function _setRoyalties(
+		uint256 _tokenId,
+		uint96 _percentageBasisPoints
+	) internal {
+		require(_percentageBasisPoints < 10000, "Royalty value should be < 10000");
+
+		royaltiesValuesByTokenId[_tokenId] = _percentageBasisPoints;
+
+		emit RoyaltySet(_tokenId, _percentageBasisPoints);
+	}
+
+	/** Return royalties information as describe at EIP-2981: NFT Royalty Standard
+	 * return nul address and value if there is no royalty to pay.
+	 * @param _tokenId NFT token id
+	 * @param _salePrice sale price
+	 * @return receiver royalty receiver address
+	 * @return royaltyAmount royalty amount to pay to receiver
+     * @dev Override isApprovedForAll to auto-approve confident operator contracts
+     *      See {ERC721-isApprovedForAll}
+     * 		See https://docs.opensea.io/docs/polygon-basic-integration#overriding-isapprovedforall-to-reduce-trading-friction
+     * @inheritdoc IERC2981
+     */
 	function royaltyInfo(
 		uint256 _tokenId,
 		uint256 _salePrice
@@ -184,35 +232,46 @@ contract MonopolyProp is ERC721Enumerable, AccessControl, Ownable, RoyaltiesV2Im
 		address receiver,
 		uint256 royaltyAmount
 	) {
-		LibPart.Part[] memory _royalties = royalties[_tokenId];
-		if(_royalties.length > 0) {
-			return (_royalties[0].account, (_salePrice * _royalties[0].value) / 10000);
+		uint96 royaltyValue = royaltiesValuesByTokenId[_tokenId];
+		if (royaltyValue > 0) {
+			return (this.owner(), (_salePrice * royaltyValue) / 10000);
 		}
 
 		return (address(0), 0);
 	}
 
 	/**
-     * Override isApprovedForAll to auto-approve OS's proxy contract (OPTIONAL)
-     * see : https://docs.opensea.io/docs/polygon-basic-integration#overriding-isapprovedforall-to-reduce-trading-friction
+     * @dev Override isApprovedForAll to auto-approve confident operator contracts only.
+     *      See {ERC721-isApprovedForAll}
+     * 		See https://docs.opensea.io/docs/polygon-basic-integration#overriding-isapprovedforall-to-reduce-trading-friction
      */
 	function isApprovedForAll(
 		address _owner,
 		address _operator
-	) public override view returns (bool isOperator) {
-		// if OpenSea's ERC721 Proxy Address is detected, auto-return true
-		// if (_operator == address(0x58807baD0B376efc12F5AD86aAc70E78ed67deaE)) {
-		//  	return true;
-		// }
-		if (isContractAllowed[_operator]) {
+	) public override view returns (bool) {
+		if (isOperatorAllowed[_operator]) {
 			return true;
 		}
 
-		// otherwise, use the default ERC721.isApprovedForAll()
-		return ERC721.isApprovedForAll(_owner, _operator);
+		return false;
 	}
 
-	function setIsContractAllowed(address _address, bool value) external onlyRole(ADMIN_ROLE) {
-		isContractAllowed[_address] = value;
+	/** Admin role can allowed un operator
+	 * @param _address operator address
+	 * @param value true / false
+	 */
+	function setIsOperatorAllowed(address _address, bool value) external onlyRole(ADMIN_ROLE) {
+		isOperatorAllowed[_address] = value;
+	}
+
+	/**
+     * @dev Override _isApprovedOrOwner to limit approval to confident operators only.
+     *      See {IERC721-_isApprovedOrOwner}.
+     */
+	function _isApprovedOrOwner(address spender, uint256 tokenId) internal view override returns (bool) {
+		require(_exists(tokenId), "ERC721: operator query for nonexistent token");
+		address owner = ERC721.ownerOf(tokenId);
+
+		return isApprovedForAll(owner, spender); // limit allowed operator as spender
 	}
 }
