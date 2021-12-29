@@ -2,19 +2,29 @@
 import React, {useState, useEffect} from 'react';
 import Tairreux from "../contracts/Tairreux.json";
 import Rogue from "../contracts/Rogue.json";
+<<<<<<< HEAD
 import User from "./User.js";
 
 import Spinner from "react-bootstrap/Spinner";
 
+=======
+import User from "./User/User.js";
+>>>>>>> b91993e6cb0c25868596e5407c615bbf514f1737
 import {ethers} from "ethers";
 import ObsBalance from "./ObsBalance";
 
 
 const Staker = (props) => {
 
+<<<<<<< HEAD
   const spinner = <Spinner as="span" animation="border" size="sm" />;
 
 	const [isReadyToRender, setIsReadyToRender] = useState(false);
+=======
+	var drone = false;
+	var droneST = false;
+
+>>>>>>> b91993e6cb0c25868596e5407c615bbf514f1737
 	var address = window.ethereum.selectedAddress;
 
 	const [amount, setAmount] = useState("");
@@ -22,6 +32,7 @@ const Staker = (props) => {
 	const [deposit, setDeposit] = useState(0);
 
 	const provider = props.p;
+<<<<<<< HEAD
 	const _networkID = props.n;
 		
 	const [MPs, setMPs] = useState(null);
@@ -55,6 +66,31 @@ const Staker = (props) => {
   if (!isReadyToRender) {
     return (<>{spinner}</>)
   }
+=======
+	
+	const MPs = new ethers.Contract(
+				Rogue.networks[1337].address,
+					Rogue.abi,
+					provider.getSigner()
+		);
+
+	const _networkID = 1337;
+
+  const stMPs = new ethers.Contract(
+	    Tairreux.networks[1337].address,
+		    Tairreux.abi,
+		    provider.getSigner()
+	);
+
+  useEffect(() => {
+
+		async function fetch() {
+			console.log("debug");
+		} 
+		fetch();
+	}, []);
+
+>>>>>>> b91993e6cb0c25868596e5407c615bbf514f1737
 	return(
 		<div>
 			<div>
@@ -62,9 +98,14 @@ const Staker = (props) => {
 			</div>
 			<div>
 				<User 
+<<<<<<< HEAD
           provider={provider}
           address={address}
           network_id={_networkID} />
+=======
+					eth_provider = {provider}
+					eth_address = {address} />
+>>>>>>> b91993e6cb0c25868596e5407c615bbf514f1737
 			</div>
 			<div>
 				<output name="address">{"_address :" + window.ethereum.selectedAddress}</output> 
