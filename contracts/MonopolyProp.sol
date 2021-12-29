@@ -240,11 +240,6 @@ contract MonopolyProp is ERC721Enumerable, AccessControl, Ownable, IERC2981 {
 		return (address(0), 0);
 	}
 
-	/**
-     * @dev Override isApprovedForAll to auto-approve confident operator contracts only.
-     *      See {ERC721-isApprovedForAll}
-     * 		See https://docs.opensea.io/docs/polygon-basic-integration#overriding-isapprovedforall-to-reduce-trading-friction
-     */
 	function isApprovedForAll(
 		address _owner,
 		address _operator

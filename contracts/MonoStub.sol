@@ -6,7 +6,7 @@ import '@openzeppelin/contracts/token/ERC20/ERC20.sol';
 // @dev For tests only
 contract MonoStub is ERC20 {
 
-    constructor(string memory name, string memory symbol) ERC20(name, symbol) {
+    constructor() ERC20("MONO token", "MONO") {
         _mint(msg.sender, 100 * 10 ** decimals());
     }
 
