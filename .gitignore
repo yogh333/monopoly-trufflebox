@@ -1,21 +1,10 @@
-<<<<<<< HEAD
-<<<<<<< HEAD
 build
 client/src/contracts
-
 node_modules
-
 #ide
 .idea
-=======
-=======
->>>>>>> b91993e6cb0c25868596e5407c615bbf514f1737
 migrations
 truffle-config.js
 node_modules
 build/
 client/src/contracts/
-<<<<<<< HEAD
->>>>>>> a1021e6 (first commit without migration, config, useless file and fix bug)
-=======
->>>>>>> b91993e6cb0c25868596e5407c615bbf514f1737

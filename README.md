@@ -1,5 +1,3 @@
-<<<<<<< HEAD
-<<<<<<< HEAD
 # monopoly-trufflebox
 Monopoly World smart contracts and React-based Dapp
 
@@ -75,7 +73,7 @@ hardhat console --network localhost
 =======
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 =======
->>>>>>> 494812a (improve README, add MPs token contract and test associated)
+
 
 ## Available Scripts
 
@@ -91,7 +89,7 @@ build EVM contract on repositories under config files (cf truffle)
 make sure to build on EVM compatible network 
 
 
-<<<<<<< HEAD
+
 ### `yarn build`
 
 Builds the app for production to the `build` folder.<br />
@@ -141,6 +139,3 @@ This section has moved here: https://facebook.github.io/create-react-app/docs/de
 ### `yarn build` fails to minify
 
 This section has moved here: https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify
->>>>>>> a1021e6 (first commit without migration, config, useless file and fix bug)
-=======
->>>>>>> 494812a (improve README, add MPs token contract and test associated)
