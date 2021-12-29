@@ -98,4 +98,14 @@ module.exports = async function (deployer, network, accounts) {
   await MonopolyMonoInstance.approve(MonopolyBankInstance.address, amount, {
     from: accounts[1],
   });
+
+  // Allow Bank contract and OpenSea's ERC721 Proxy Address
+  await MonopolyPropInstance.setIsOperatorAllowed(
+    MonopolyBankInstance.address,
+    true
+  );
+  await MonopolyPropInstance.setIsOperatorAllowed(
+    "0x58807baD0B376efc12F5AD86aAc70E78ed67deaE",
+    true
+  );
 };
