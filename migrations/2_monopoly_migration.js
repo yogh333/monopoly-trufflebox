@@ -50,24 +50,32 @@ module.exports = async function (deployer, network, accounts) {
 
   // Setup roles
   // Bank mint Prop & Build
-  const MINTER_ROLE = await MonopolyPropInstance.MINTER_ROLE()
-  await MonopolyPropInstance.grantRole(MINTER_ROLE, MonopolyBankInstance.address, { "from": accounts[0] })
-  await MonopolyBuildInstance.grantRole(MINTER_ROLE, MonopolyBankInstance.address, { "from": accounts[0] })
+  const MINTER_ROLE = await MonopolyPropInstance.MINTER_ROLE();
+  await MonopolyPropInstance.grantRole(
+    MINTER_ROLE,
+    MonopolyBankInstance.address,
+    { from: accounts[0] }
+  );
+  await MonopolyBuildInstance.grantRole(
+    MINTER_ROLE,
+    MonopolyBankInstance.address,
+    { from: accounts[0] }
+  );
 
   // initialize Paris board prices
-  let commonLandPrices = []
-  let housePrices = []
+  let commonLandPrices = [];
+  let housePrices = [];
   Paris.lands.forEach((land, index) => {
-    commonLandPrices[index] = 0
-    if(land.hasOwnProperty('commonPrice')){
-      commonLandPrices[index] = land.commonPrice
+    commonLandPrices[index] = 0;
+    if (land.hasOwnProperty("commonPrice")) {
+      commonLandPrices[index] = land.commonPrice;
     }
 
-    housePrices[index] = 0
-    if(land.hasOwnProperty('housePrice')){
-      housePrices[index] = land.housePrice
+    housePrices[index] = 0;
+    if (land.hasOwnProperty("housePrice")) {
+      housePrices[index] = land.housePrice;
     }
-  })
+  });
 
   await MonopolyBankInstance.setPrices(
     Paris.id,
@@ -77,24 +85,25 @@ module.exports = async function (deployer, network, accounts) {
     Paris.buildingMultiplier,
     commonLandPrices,
     housePrices,
-    { "from": accounts[0] }
+    { from: accounts[0] }
   );
 
-  const amount = web3.utils.toWei("1000", "ether")
+  const amount = web3.utils.toWei("1000", "ether");
 
-  await MonopolyMonoInstance.mint(
-    accounts[1],
-    amount
-  );
+  await MonopolyMonoInstance.mint(accounts[1], amount);
 
   // Give allowance to contract to spend all $MONO
-  await MonopolyMonoInstance.approve(
-    MonopolyBankInstance.address,
-    amount,
-    { "from": accounts[1] }
-  )
+  await MonopolyMonoInstance.approve(MonopolyBankInstance.address, amount, {
+    from: accounts[1],
+  });
 
   // Allow Bank contract and OpenSea's ERC721 Proxy Address
-  await MonopolyPropInstance.setIsContractAllowed(MonopolyBankInstance.address)
-  await MonopolyPropInstance.setIsContractAllowed("0x58807baD0B376efc12F5AD86aAc70E78ed67deaE")
+  await MonopolyPropInstance.setIsOperatorAllowed(
+    MonopolyBankInstance.address,
+    true
+  );
+  await MonopolyPropInstance.setIsOperatorAllowed(
+    "0x58807baD0B376efc12F5AD86aAc70E78ed67deaE",
+    true
+  );
 };
