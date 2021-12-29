@@ -14,8 +14,15 @@ contract MonopolyBoard is AccessControl {
 	event ePawn(uint16 indexed _edition, uint256 indexed _pawnID);
 
 	struct Pawn {
+<<<<<<< HEAD
+		uint256 id;
+		uint8 position;
+		uint8[] dices_score;
+		uint16 rolls_balance;
+=======
 		bool isOnBoard;
 		uint8 position;
+>>>>>>> main
 	}
 
 	struct Board {
@@ -32,8 +39,23 @@ contract MonopolyBoard is AccessControl {
 
 	mapping(uint16 => Board) private boards;
 
+<<<<<<< HEAD
+	MonopolyPawn immutable pawnToken;
+
+	constructor(address pawnToken_address)
+		VRFConsumerBase(
+			0x8C7382F9D8f56b33781fE506E897a4F1e2d17255, // VRF Coordinator
+			0x326C977E6efc84E512bB9C30f76E30c160eD06FB  // LINK Token
+		)
+	{
+		keyHash = 0x6e75b569a01ef56d18cab6a8e71e6600d6ce853834d4a5748b720d06f878b3a4;
+		fee = 0.0001 * 10 ** 18; // 0.1 LINK (Varies by network)
+
+		require(pawnToken_address != address(0));
+=======
 	constructor(address pawn_address) {
 		require(pawn_address != address(0));
+>>>>>>> main
 
 		_setupRole(ADMIN_ROLE, msg.sender);
 		_setRoleAdmin(ADMIN_ROLE, ADMIN_ROLE);
@@ -41,6 +63,10 @@ contract MonopolyBoard is AccessControl {
 		_setRoleAdmin(MANAGER_ROLE, ADMIN_ROLE);
 
 		editionMax = 0;
+<<<<<<< HEAD
+		pawnToken = MonopolyPawn(pawnToken_address);
+=======
+>>>>>>> main
 
 		Board storage b = boards[0];
 		b.nbOfLands = 40;
@@ -73,6 +99,34 @@ contract MonopolyBoard is AccessControl {
 		b.isBuildingLand[39] = true;
 
 		b.buildType = 1;
+	}
+
+	/// @dev pseudo-random function
+	/// @return a random value in between [0, type(uint16).max]
+	function random(address user) public view returns (uint16) {
+		return uint16( uint256( keccak256( abi.encodePacked( block.difficulty, block.timestamp, user)))
+			% type(uint16).max % 6 + 1);
+	}
+
+
+	/**
+     * @notice Requests randomness
+     * @return requestId the id of the request for the oracle
+     */
+	function getRandomNumber() public returns (bytes32 requestId) {
+		require(LINK.balanceOf(address(this)) >= fee, "Not enough LINK - fill contract with faucet");
+		return requestRandomness(keyHash, fee);
+	}
+
+	/**
+     * @notice Callback function used by VRF Coordinator
+     * @param requestId the id of the request for the oracle
+     * @param randomness randomness must be requested from an oracle, which generates a number and a cryptographic proof
+     */
+	function fulfillRandomness(bytes32 requestId, uint256 randomness) internal override {
+		randomResult = randomness % 6 + 1;
+
+		emit GenerateRandomResult(randomResult);
 	}
 
 	function isBuildingLand(uint16 edition, uint8 land) external view returns (bool) {
