@@ -64,31 +64,7 @@ export default function User(props) {
         if (BoardSC == null) return;
 
         //TODO: Replace by the call at the oracle
-        console.log('BoardSC: ', BoardSC);
-        BoardSC.on("GenerateRandomResult", (ramdomNumber) => {
-            console.log('ramdomNumber: ', ramdomNumber);
-        });
-
-        /*
-        filter = {
-            address: THE_ADDRESS_OF_YOUR_CONTRACT,
-            topics: [
-                // the name of the event, parnetheses containing the data type of each event, no spaces
-                utils.id("Transfer(address,address,uint256)")
-            ]
-        }
-        provider.on(filter, () => {
-            // do whatever you want here
-            // I'm pretty sure this returns a promise, so don't forget to resolve it
-        })
-*/
-        //const getRandomNumber = await BoardSC.getRandomNumber();
-        //console.log('getRandomNumber(): ', getRandomNumber);
-
-
-
         //Generates a random number by JS
-        /*
         const generateNewNumber = () => Math.floor(Math.random() * 6 + 1);
 
         const newValue1 = generateNewNumber();
@@ -100,29 +76,7 @@ export default function User(props) {
         handleNewPosition(currentPosition, total);
         console.log('total:', {total});
         setRollDice([newValue1, newValue2]);
-        */
-
     }
-
-    const getRandomNumber = (event) => {
-
-
-
-        /*
-        let requestId;
-        let randomness;
-        if (!(BoardSC && requestId && randomness)) {
-            return;
-        }
-
-        const type = event.target.getAttribute("data-type");
-        //Bank.buyBuild(editionId, landInfo.id, type, 1).then();
-        BoardSC.getRandomNumber().then();
-        console.log()
-        */
-
-    };
-
 
     /**
      * name: handleNewPosition

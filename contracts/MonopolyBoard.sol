@@ -84,6 +84,14 @@ contract MonopolyBoard is AccessControl {
 		b.buildType = 1;
 	}
 
+	/// @dev pseudo-random function
+	/// @return a random value in between [0, type(uint16).max]
+	function random(address user) public view returns (uint16) {
+		return uint16( uint256( keccak256( abi.encodePacked( block.difficulty, block.timestamp, user)))
+			% type(uint16).max % 6 + 1);
+	}
+
+
 	/**
      * @notice Requests randomness
      * @return requestId the id of the request for the oracle
