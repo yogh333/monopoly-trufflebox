@@ -17,11 +17,10 @@
  * phrase from a file you've .gitignored so it doesn't accidentally become public.
  *
  */
-const HDWalletProvider = require('@truffle/hdwallet-provider');
-const fs = require('fs');
+const HDWalletProvider = require("@truffle/hdwallet-provider");
+const fs = require("fs");
 const path = require("path");
 require("dotenv").config();
-
 
 module.exports = {
   /**
@@ -45,7 +44,7 @@ module.exports = {
       host: "127.0.0.1", // Localhost (default: none)
       port: 8545, // Standard Ethereum port (default: none)
       network_id: "*", // Any network (default: none)
-    }
+    },
 
     // Another network with more advanced options...
     // advanced: {
@@ -82,7 +81,7 @@ module.exports = {
   // Configure your compilers
   compilers: {
     solc: {
-      version: "0.8.8", // Fetch exact version from solc-bin (default: truffle's version)
+      version: "0.8.10", // Fetch exact version from solc-bin (default: truffle's version)
       // docker: true,        // Use "0.5.1" you've installed locally with docker (default: false)
       // settings: {          // See the solidity docs for advice about optimization and evmVersion
       //  optimizer: {
