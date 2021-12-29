@@ -8,14 +8,21 @@ import "./MonopolyPawn.sol";
 
 contract MonopolyBoard is AccessControl {
 	bytes32 public constant ADMIN_ROLE = keccak256("ADMIN_ROLE");
+	bytes32 public constant MANAGER_ROLE = keccak256("MANAGER_ROLE");
 
-	event eNewBoard(uint16 indexed new_edition_nb);
+	event eBoard(uint16 indexed new_edition_nb);
+	event ePawn(uint16 indexed _edition, uint256 indexed _pawnID);
 
 	struct Pawn {
+<<<<<<< HEAD
 		uint256 id;
 		uint8 position;
 		uint8[] dices_score;
 		uint16 rolls_balance;
+=======
+		bool isOnBoard;
+		uint8 position;
+>>>>>>> main
 	}
 
 	struct Board {
@@ -32,6 +39,7 @@ contract MonopolyBoard is AccessControl {
 
 	mapping(uint16 => Board) private boards;
 
+<<<<<<< HEAD
 	MonopolyPawn immutable pawnToken;
 
 	constructor(address pawnToken_address)
@@ -44,12 +52,21 @@ contract MonopolyBoard is AccessControl {
 		fee = 0.0001 * 10 ** 18; // 0.1 LINK (Varies by network)
 
 		require(pawnToken_address != address(0));
+=======
+	constructor(address pawn_address) {
+		require(pawn_address != address(0));
+>>>>>>> main
 
 		_setupRole(ADMIN_ROLE, msg.sender);
 		_setRoleAdmin(ADMIN_ROLE, ADMIN_ROLE);
+		_setupRole(MANAGER_ROLE, msg.sender);
+		_setRoleAdmin(MANAGER_ROLE, ADMIN_ROLE);
 
 		editionMax = 0;
+<<<<<<< HEAD
 		pawnToken = MonopolyPawn(pawnToken_address);
+=======
+>>>>>>> main
 
 		Board storage b = boards[0];
 		b.nbOfLands = 40;
@@ -136,8 +153,9 @@ contract MonopolyBoard is AccessControl {
 		uint8 _nbOfLands,
 		uint8 _rarityLevel,
 		uint8[] calldata _buildingLands,
-		uint8 _buildType
-	) public onlyRole(ADMIN_ROLE) {
+		uint8 _buildType,
+		uint16 _maxPawns
+	) public onlyRole(MANAGER_ROLE) {
 		editionMax += 1;
 		Board storage b = boards[editionMax];
 		b.nbOfLands = _nbOfLands;
@@ -148,48 +166,40 @@ contract MonopolyBoard is AccessControl {
 		}
 
 		b.buildType = _buildType;
+		b.nb_pawns_max = _maxPawns;
 
-		emit eNewBoard(editionMax);
+		emit eBoard(editionMax);
 	}
 
-	function register(uint16 _edition, uint256 _pawnID) external onlyRole(ADMIN_ROLE) {
+	function register(uint16 _edition, uint256 _pawnID) external onlyRole(MANAGER_ROLE) returns (bool isOnBoarded) {
 		require(_edition <= editionMax, "Unknown edition");
-		require(boards[_edition].pawns[_pawnID].id == 0, "pawns already registered");
+		require(boards[_edition].pawns[_pawnID].isOnBoard == false, "pawn already registered");
 		require(boards[_edition].nb_pawns + 1 < boards[_edition].nb_pawns_max, "game is full");
 
-		Pawn storage p = boards[_edition].pawns[_pawnID];
-		p.id = _pawnID;
-
+		boards[_edition].pawns[_pawnID].isOnBoard = true;
 		boards[_edition].nb_pawns += 1;
 
-		// emit event new pawn
-		//emit ePlayer(_player, _edition);
+		emit ePawn(_edition, _pawnID);
+
+		return true;
 	}
 
-	function updateRollsBalance(
-		uint16 _edition,
-		uint256 _pawnID,
-		uint16 value
-	) external {
-		require(boards[_edition].pawns[_pawnID].id != 0, "Unregistered pawn");
-
-		// To be done: check overflow
-		boards[_edition].pawns[_pawnID].rolls_balance += value;
+	function isRegistered(uint16 _edition, uint256 _pawnID) public view returns (bool) {
+		return boards[_edition].pawns[_pawnID].isOnBoard;
 	}
 
-	function play(uint16 _edition, uint256 _pawnID) external {
-		require(boards[_edition].pawns[_pawnID].id != 0, "Unregistered pawn");
-		require(boards[_edition].pawns[_pawnID].rolls_balance > 0, "no more dices roll available");
+	function play(uint16 _edition, uint256 _pawnID) external onlyRole(MANAGER_ROLE) returns (uint8 dices_score_) {
+		require(boards[_edition].pawns[_pawnID].isOnBoard == true, "Unregistered pawn");
 
-		// roll dices (randomly, to be improved)
-		uint8 dice = 2 + uint8(uint256(keccak256(abi.encodePacked(block.difficulty, block.timestamp))) % 11);
-		boards[_edition].pawns[_pawnID].dices_score.push(dice);
-		boards[_edition].pawns[_pawnID].rolls_balance -= 1;
+		// roll dices (randomly)
+		dices_score_ = 4;
 
 		// update player's position (modulo boards[edition].nbOfLands)
-		boards[_edition].pawns[_pawnID].position += dice % boards[_edition].nbOfLands;
+		boards[_edition].pawns[_pawnID].position += dices_score_ % boards[_edition].nbOfLands;
+	}
 
-		// emit event with player's new position
-		//emit ePosition(msg.sender, _edition, board[edition].players[msg.sender].position);
+	function getPawn(uint16 _edition, uint256 _pawnID) external view returns (uint8) {
+		require(isRegistered(_edition, _pawnID), "pawn has not been regsitered");
+		return boards[_edition].pawns[_pawnID].position;
 	}
 }

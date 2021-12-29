@@ -35,7 +35,7 @@ contract MonopolyBuild is ERC1155Supply, AccessControl {
 	}
 
 	mapping(uint256 => Build) private builds;
-	mapping(uint16 => mapping (uint8 => uint256[])) buildIdByLandByEdition;
+	mapping(uint16 => mapping(uint8 => uint256[])) private buildIdByLandByEdition;
 
 	constructor(address board_address, string memory _uri) ERC1155(_uri) {
 		_setupRole(ADMIN_ROLE, msg.sender);
@@ -76,7 +76,6 @@ contract MonopolyBuild is ERC1155Supply, AccessControl {
 	function supportsInterface(bytes4 _interfaceId) public view override(ERC1155, AccessControl) returns (bool) {
 		return super.supportsInterface(_interfaceId);
 	}
-
 
 	function generateID(
 		uint16 _edition,
