@@ -2,16 +2,19 @@
 import React, {useState, useEffect} from 'react';
 import Tairreux from "../contracts/Tairreux.json";
 import Rogue from "../contracts/Rogue.json";
-import User from "./User/User.js";
+import User from "./User.js";
+
+import Spinner from "react-bootstrap/Spinner";
+
 import {ethers} from "ethers";
 import ObsBalance from "./ObsBalance";
 
 
 const Staker = (props) => {
 
-	var drone = false;
-	var droneST = false;
+  const spinner = <Spinner as="span" animation="border" size="sm" />;
 
+	const [isReadyToRender, setIsReadyToRender] = useState(false);
 	var address = window.ethereum.selectedAddress;
 
 	const [amount, setAmount] = useState("");
@@ -19,29 +22,39 @@ const Staker = (props) => {
 	const [deposit, setDeposit] = useState(0);
 
 	const provider = props.p;
-	
-	const MPs = new ethers.Contract(
-				Rogue.networks[1337].address,
-					Rogue.abi,
-					provider.getSigner()
-		);
-
-	const _networkID = 1337;
-
-  const stMPs = new ethers.Contract(
-	    Tairreux.networks[1337].address,
-		    Tairreux.abi,
-		    provider.getSigner()
-	);
+	const _networkID = props.n;
+		
+	const [MPs, setMPs] = useState(null);
+	const [stMPs, setstMPs] = useState(null);
 
   useEffect(() => {
+  
+    if (!(provider && address && _networkID)) {
+    	setIsReadyToRender(false);
+    	console.log("render False");
+    	return
+    }
+    const _MPs = new ethers.Contract(
+			Rogue.networks[_networkID].address,
+			Rogue.abi,
+			provider.getSigner()
+		);
+		setMPs(_MPs);
+		const _stMPs = new ethers.Contract(
+	    Tairreux.networks[_networkID].address,
+		  Tairreux.abi,
+		  provider.getSigner()
+		);
+		setstMPs(_stMPs);
+		setIsReadyToRender(false);
+		if(!(MPs && stMPs))
+			console.log("render True");
+			setIsReadyToRender(true);
+	},[provider]);
 
-		async function fetch() {
-			console.log("debug");
-		} 
-		fetch();
-	}, []);
-
+  if (!isReadyToRender) {
+    return (<>{spinner}</>)
+  }
 	return(
 		<div>
 			<div>
@@ -49,8 +62,9 @@ const Staker = (props) => {
 			</div>
 			<div>
 				<User 
-					eth_provider = {provider}
-					eth_address = {address} />
+          provider={provider}
+          address={address}
+          network_id={_networkID} />
 			</div>
 			<div>
 				<output name="address">{"_address :" + window.ethereum.selectedAddress}</output> 

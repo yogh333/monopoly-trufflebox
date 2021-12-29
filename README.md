@@ -34,11 +34,17 @@ To compile all smart contracts:
 ```
 truffle compile
 ```
+## Deployer
+
+Start a local node and deploy the top-level contracts: npm start # served on localhost:3000
+```
+npm deploy
+```
 
 ## Unit Tests
 
 ```
-truffle test
+npm test
 ```
 ## Migration
 
@@ -56,6 +62,16 @@ To launch React front-end
 cd client
 npm start
 ```
+
+## connect localy
+
+Start up a Hardhat Console: hardhat console --network localhost
+
+```
+hardhat console --network localhost
+```
+
+
 =======
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 =======
