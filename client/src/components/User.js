@@ -73,9 +73,9 @@ export default function User(props) {
     //const getRandomNumber = await BoardSC.getRandomKeccak();
     //console.log('getRandomNumber(): ', getRandomNumber);
 
-    const getRandomNumber = await Board.getRandomKeccak();
-    console.log("getRandomNumber():!!!!!!!!!! ", getRandomNumber);
-    console.log("hello!");
+    //const getRandomNumber = await Board.getRandomKeccak();
+    //console.log("getRandomNumber():!!!!!!!!!! ", getRandomNumber);
+    //console.log("hello!");
 
     //TODO: Replace by the call at the oracle
     //Generates a random number by JS
