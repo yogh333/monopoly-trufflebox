@@ -49,6 +49,8 @@ contract("Property royalties", async (accounts) => {
     );
 
     BankInstance = await Bank.new(
+      PawnInstance.address,
+      BoardInstance.address,
       PropInstance.address,
       BuildInstance.address,
       MonoInstance.address,
