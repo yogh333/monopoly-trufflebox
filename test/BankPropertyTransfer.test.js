@@ -2,8 +2,8 @@
 
 Paris = require("../client/src/data/Paris.json");
 
-const Bank = artifacts.require("MonopolyBank");
-const Prop = artifacts.require("MonopolyProp");
+const Bank = artifacts.require("BankContract");
+const Prop = artifacts.require("PropContract");
 const PawnStub = artifacts.require("PawnStub");
 const BoardStub = artifacts.require("BoardStub");
 const MonoStub = artifacts.require("MonoStub");
@@ -14,7 +14,7 @@ const { assert } = require("chai");
 const { BN } = require("@openzeppelin/test-helpers");
 const { web3 } = require("@openzeppelin/test-helpers/src/setup");
 
-contract("Property royalties", async (accounts) => {
+contract("Bank royalties", async (accounts) => {
   const _contractOwner = accounts[0];
   const _seller = accounts[1];
   const _buyer = accounts[2];
