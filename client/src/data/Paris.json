@@ -11,7 +11,7 @@
         "type": "go",
         "position": "bottom",
         "corner": true,
-        "visual": "./images/cell0.png"
+        "visual": "./images/boards/Paris/cells/cell0.png"
     },
     {
         "name": "Boulevard de Belleville",
@@ -25,13 +25,13 @@
         "house": 50,
         "housePrice": 1,
         "deFiMultiplier": 1,
-        "visual": "./images/cell1.png"
+        "visual": "./images/boards/Paris/cells/cell1.png"
     },
     {
         "name": "Caisse de Communauté",
         "type": "community-chest",
         "position": "bottom",
-        "visual": "./images/cell2.png"
+        "visual": "./images/boards/Paris/cells/cell2.png"
     },
     {
         "name": "Rue Lecourbe",
@@ -45,7 +45,7 @@
         "house": 50,
         "housePrice": 1,
         "deFiMultiplier": 1,
-        "visual": "./images/cell3.png"
+        "visual": "./images/boards/Paris/cells/cell3.png"
     },
     {
         "name": "Impôts sur le revenu",
@@ -53,7 +53,7 @@
         "position": "bottom",
         "commonPrice": 20,
         "cost": 200,
-        "visual": "./images/cell4.png"
+        "visual": "./images/boards/Paris/cells/cell4.png"
     },
     {
         "name": "Gare Montparnasse",
@@ -62,7 +62,7 @@
         "commonPrice": 20,
         "cost": 200,
         "group": [9, 1, 4],
-        "visual": "./images/cell5.png"
+        "visual": "./images/boards/Paris/cells/cell5.png"
     },
     {
         "name": "Rue de Vaugirard",
@@ -76,13 +76,13 @@
         "house": 50,
         "housePrice": 1,
         "deFiMultiplier": 1.1,
-        "visual": "./images/cell6.png"
+        "visual": "./images/boards/Paris/cells/cell6.png"
     },
     {
         "name": "Chance",
         "type": "chance",
         "position": "bottom",
-        "visual": "./images/cell7.png"
+        "visual": "./images/boards/Paris/cells/cell7.png"
     },
     {
         "name": "Rue de Courcelles",
@@ -96,7 +96,7 @@
         "house": 50,
         "housePrice": 1,
         "deFiMultiplier": 1.1,
-        "visual": "./images/cell8.png"
+        "visual": "./images/boards/Paris/cells/cell8.png"
     },
     {
         "name": "Avenue de la République",
@@ -110,14 +110,14 @@
         "house": 50,
         "housePrice": 1,
         "deFiMultiplier": 1.2,
-        "visual": "./images/cell9.png"
+        "visual": "./images/boards/Paris/cells/cell9.png"
     },
     {
         "name": "Jail",
         "type": "jail",
         "position": "bottom",
         "corner": true,
-        "visual": "./images/cell10.png"
+        "visual": "./images/boards/Paris/cells/cell10.png"
     },
     {
         "name": "Boulevard de la Villette",
@@ -131,7 +131,7 @@
         "house": 100,
         "housePrice": 1,
         "deFiMultiplier": 1.3,
-        "visual": "./images/cell11.png"
+        "visual": "./images/boards/Paris/cells/cell11.png"
     },
     {
         "name": "Compagnie de distributon de l'électricité",
@@ -140,7 +140,7 @@
         "commonPrice": 15,
         "cost": 150,
         "group": [10, 1, 2],
-        "visual": "./images/cell12.png"
+        "visual": "./images/boards/Paris/cells/cell12.png"
     },
     {
         "name": "Avenue de Neuilly",
@@ -154,7 +154,7 @@
         "house": 100,
         "housePrice": 1,
         "deFiMultiplier": 1.3,
-        "visual": "./images/cell13.png"
+        "visual": "./images/boards/Paris/cells/cell13.png"
     },
     {
         "name": "Rue de Paradis",
@@ -168,7 +168,7 @@
         "house": 100,
         "housePrice": 1,
         "deFiMultiplier": 1.3,
-        "visual": "./images/cell14.png"
+        "visual": "./images/boards/Paris/cells/cell14.png"
     },
     {
         "name": "Gare de Lyon",
@@ -177,7 +177,7 @@
         "commonPrice": 20,
         "cost": 200,
         "group": [9, 2, 4],
-        "visual": "./images/cell15.png"
+        "visual": "./images/boards/Paris/cells/cell15.png"
     },
     {
         "name": "Avenue Mozart",
@@ -191,13 +191,13 @@
         "house": 100,
         "housePrice": 1,
         "deFiMultiplier": 1.4,
-        "visual": "./images/cell16.png"
+        "visual": "./images/boards/Paris/cells/cell16.png"
     },
     {
         "name": "Caisse de Communauté",
         "type": "community-chest",
         "position": "left",
-        "visual": "./images/cell17.png"
+        "visual": "./images/boards/Paris/cells/cell17.png"
     },
     {
         "name": "Boulevard Saint Michel",
@@ -211,7 +211,7 @@
         "house": 100,
         "housePrice": 1,
         "deFiMultiplier": 1.4,
-        "visual": "./images/cell18.png"
+        "visual": "./images/boards/Paris/cells/cell18.png"
     },
     {
         "name": "Place Pigalle",
@@ -225,14 +225,14 @@
         "house": 100,
         "housePrice": 1,
         "deFiMultiplier": 1.4,
-        "visual": "./images/cell19.png"
+        "visual": "./images/boards/Paris/cells/cell19.png"
     },
     {
         "name": "Parking Gratuit",
         "type": "free-parking",
         "position": "left",
         "corner": true,
-        "visual": "./images/cell20.png"
+        "visual": "./images/boards/Paris/cells/cell20.png"
     },
     {
         "name": "Avenue Matignon",
@@ -246,13 +246,13 @@
         "house": 150,
         "housePrice": 1,
         "deFiMultiplier": 1.5,
-        "visual": "./images/cell21.png"
+        "visual": "./images/boards/Paris/cells/cell21.png"
     },
     {
         "name": "Chance",
         "type": "chance",
         "position": "top",
-        "visual": "./images/cell22.png"
+        "visual": "./images/boards/Paris/cells/cell22.png"
     },
     {
         "name": "Boulevard Malesherbes",
@@ -266,7 +266,7 @@
         "house": 150,
         "housePrice": 1,
         "deFiMultiplier": 1.5,
-        "visual": "./images/cell23.png"
+        "visual": "./images/boards/Paris/cells/cell23.png"
     },
     {
         "name": "Avenue Henri-Martin",
@@ -280,7 +280,7 @@
         "house": 150,
         "housePrice": 1,
         "deFiMultiplier": 1.5,
-        "visual": "./images/cell24.png"
+        "visual": "./images/boards/Paris/cells/cell24.png"
     },
     {
         "name": "Gare du Nord",
@@ -289,7 +289,7 @@
         "commonPrice": 20,
         "cost": 200,
         "group": [9, 3, 4],
-        "visual": "./images/cell25.png"
+        "visual": "./images/boards/Paris/cells/cell25.png"
     },
     {
         "name": "Faubourg Saint Honoré",
@@ -303,7 +303,7 @@
         "house": 150,
         "housePrice": 1,
         "deFiMultiplier": 1.6,
-        "visual": "./images/cell26.png"
+        "visual": "./images/boards/Paris/cells/cell26.png"
     },
     {
         "name": "Place de La Bourse",
@@ -317,7 +317,7 @@
         "house": 150,
         "housePrice": 1,
         "deFiMultiplier": 1.6,
-        "visual": "./images/cell27.png"
+        "visual": "./images/boards/Paris/cells/cell27.png"
     },
     {
         "name": "Compagnie de distribution des eaux",
@@ -326,7 +326,7 @@
         "commonPrice": 15,
         "cost": 150,
         "group": [10, 2, 2],
-        "visual": "./images/cell28.png"
+        "visual": "./images/boards/Paris/cells/cell28.png"
     },
     {
         "name": "Rue Lafayette",
@@ -340,14 +340,14 @@
         "house": 150,
         "housePrice": 1,
         "deFiMultiplier": 1.6,
-        "visual": "./images/cell29.png"
+        "visual": "./images/boards/Paris/cells/cell29.png"
     },
     {
         "name": "Allez en Prison",
         "type": "go-to-jail",
         "position": "top",
         "corner": true,
-        "visual": "./images/cell30.png"
+        "visual": "./images/boards/Paris/cells/cell30.png"
     },
     {
         "name": "Avenue de Breteuil",
@@ -361,7 +361,7 @@
         "house": 200,
         "housePrice": 1,
         "deFiMultiplier": 1.7,
-        "visual": "./images/cell31.png"
+        "visual": "./images/boards/Paris/cells/cell31.png"
     },
     {
         "name": "Avenue Foch",
@@ -375,13 +375,13 @@
         "house": 200,
         "housePrice": 1,
         "deFiMultiplier": 1.7,
-        "visual": "./images/cell32.png"
+        "visual": "./images/boards/Paris/cells/cell32.png"
     },
     {
         "name": "Caisse de Communauté",
         "type": "community-chest",
         "position": "right",
-        "visual": "./images/cell33.png"
+        "visual": "./images/boards/Paris/cells/cell33.png"
     },
     {
         "name": "Boulevard des Capucines",
@@ -395,7 +395,7 @@
         "house": 200,
         "housePrice": 1,
         "deFiMultiplier": 1.7,
-        "visual": "./images/cell34.png"
+        "visual": "./images/boards/Paris/cells/cell34.png"
     },
     {
         "name": "Gare Saint Lazare",
@@ -404,13 +404,13 @@
         "commonPrice": 20,
         "cost": 200,
         "group": [9, 4, 4],
-        "visual": "./images/cell35.png"
+        "visual": "./images/boards/Paris/cells/cell35.png"
     },
     {
         "name": "Chance",
         "type": "chance",
         "position": "right",
-        "visual": "./images/cell36.png"
+        "visual": "./images/boards/Paris/cells/cell36.png"
     },
     {
         "name": "Avenue des Champs Elysées",
@@ -424,14 +424,14 @@
         "house": 200,
         "housePrice": 1,
         "deFiMultiplier": 2,
-        "visual": "./images/cell37.png"
+        "visual": "./images/boards/Paris/cells/cell37.png"
     },
     {
         "name": "Taxe de Luxe",
         "type": "tax",
         "position": "right",
         "cost": 100,
-        "visual": "./images/cell38.png"
+        "visual": "./images/boards/Paris/cells/cell38.png"
     },
     {
         "name": "Rue de la Paix",
@@ -445,7 +445,7 @@
         "house": 200,
         "housePrice": 1,
         "deFiMultiplier": 2,
-        "visual": "./images/cell39.png"
+        "visual": "./images/boards/Paris/cells/cell39.png"
     }
     ]
 }

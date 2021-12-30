@@ -1,10 +1,8 @@
 import { useState, useEffect } from "react";
 import { ethers } from "ethers";
 
-import PropJson from "../contracts/MonopolyProp.json";
-import BuildJson from "../contracts/MonopolyBuild.json";
-import MonoJson from "../contracts/MonopolyMono.json";
-import BankJson from "../contracts/MonopolyBank.json";
+import PropJson from "../contracts/PropContract.json";
+import BuildJson from "../contracts/BuildContract.json";
 
 import Button from "react-bootstrap/Button";
 import Spinner from "react-bootstrap/Spinner";

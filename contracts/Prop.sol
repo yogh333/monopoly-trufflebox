@@ -1,24 +1,13 @@
-// MonopolyPROP.sol
+// Prop.sol
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+pragma solidity 0.8.10;
 
 import "@openzeppelin/contracts/access/AccessControl.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/interfaces/IERC2981.sol";
 
-import "./MonopolyBoard.sol";
-
-struct Prop {
-	// edition number
-	uint16 edition;
-	// id of the cell of Monopoly board
-	uint8 land;
-	// rarity level (as a power of 10, i.e rarity = 1 means 10^1 = 10 versions)
-	uint8 rarity;
-	// serial number
-	uint32 serial;
-}
+import "./Board.sol";
 
 /**
  * @notice
@@ -27,21 +16,27 @@ struct Prop {
  * Token owner can't resell is token outside an authorized Marketplace or directly to another address.
  * support royalties implementation with method royaltyInfo() from ERC2981 (see interface declaration at supportsInterface function),
  * inherit from Ownable to support Opensea Marketplace
- * and add getRaribleV2Royalties method to support Rarible Marketplace.
- *
- *
- *
  */
-contract MonopolyProp is ERC721Enumerable, AccessControl, Ownable, IERC2981 {
+contract PropContract is ERC721Enumerable, AccessControl, Ownable, IERC2981 {
+	struct Property {
+		// edition number
+		uint16 edition;
+		// id of the cell of Board
+		uint8 land;
+		// rarity level (as a power of 10, i.e rarity = 1 means 10^1 = 10 versions)
+		uint8 rarity;
+		// serial number
+		uint32 serial;
+	}
 
 	bytes32 public constant ADMIN_ROLE = keccak256("ADMIN_ROLE");
 	bytes32 public constant MINTER_ROLE = keccak256("MINTER_ROLE");
 
 	bytes4 private constant _INTERFACE_ID_ERC2981 = 0x2a55205a;
 
-	MonopolyBoard private immutable board;
+	BoardContract private immutable Board;
 
-	mapping(uint256 => Prop) private props;
+	mapping(uint256 => Property) private props;
 	// Number of minted properties for each (edition, land, rarity) tuple
 	mapping(uint16 => mapping(uint8 => mapping(uint8 => uint16))) numOfProps;
 
@@ -58,7 +53,7 @@ contract MonopolyProp is ERC721Enumerable, AccessControl, Ownable, IERC2981 {
 	event RoyaltySet(uint256 tokenId, uint256 royaltyPercentageBasisPoints);
 
 	constructor(
-		address board_address,
+		address BoardAddress,
 		string memory _name,
 		string memory _symbol,
 		string memory _baseTokenURI
@@ -70,7 +65,7 @@ contract MonopolyProp is ERC721Enumerable, AccessControl, Ownable, IERC2981 {
 		_setupRole(MINTER_ROLE, msg.sender);
 		_setRoleAdmin(MINTER_ROLE, ADMIN_ROLE);
 
-		board = MonopolyBoard(board_address);
+		Board = BoardContract(BoardAddress);
 	}
 
 	function isValidProp(
@@ -79,10 +74,10 @@ contract MonopolyProp is ERC721Enumerable, AccessControl, Ownable, IERC2981 {
 		uint8 rarity
 	) public view returns (bool) {
 		return
-			(edition <= board.getMaxEdition()) &&
-			(land <= board.getNbLands(edition)) &&
-			(board.isBuildingLand(edition, land)) &&
-			(rarity <= board.getRarityLevel(edition))
+			(edition <= Board.getMaxEdition()) &&
+			(land <= Board.getNbLands(edition)) &&
+			(Board.isBuildingLand(edition, land)) &&
+			(rarity <= Board.getRarityLevel(edition))
 		;
 	}
 
@@ -112,17 +107,17 @@ contract MonopolyProp is ERC721Enumerable, AccessControl, Ownable, IERC2981 {
 		uint8 _land,
 		uint8 _rarity
 	) external onlyRole(MINTER_ROLE) returns (uint256 id_) {
-		require(isValidProp(_edition, _land, _rarity), "PROP cannot be minted");
+		require(isValidProp(_edition, _land, _rarity), "Prop cannot be minted");
 		id_ = generateID(_edition, _land, _rarity);
 
 		_safeMint(_to, id_);
 		_setRoyalties(id_);
 	}
 
-	function get(uint256 _id) public view returns (Prop memory p_) {
+	function get(uint256 _id) public view returns (Property memory property_) {
 		require(exists(_id), "This property does not exist");
 
-		p_ = props[_id];
+		property_ = props[_id];
 	}
 
 	function exists(uint256 _id) public view returns (bool) {
@@ -138,7 +133,7 @@ contract MonopolyProp is ERC721Enumerable, AccessControl, Ownable, IERC2981 {
 		uint8 _land,
 		uint8 _rarity
 	) public view returns (uint32 amount_) {
-		require(isValidProp(_edition, _land, _rarity), "PROP does not exist");
+		require(isValidProp(_edition, _land, _rarity), "Prop does not exist");
 		return numOfProps[_edition][_land][_rarity];
 	}
 
@@ -167,7 +162,7 @@ contract MonopolyProp is ERC721Enumerable, AccessControl, Ownable, IERC2981 {
 
 		id_ = uint256(keccak256(abi.encode(_edition, _land, _rarity, serial)));
 
-		props[id_] = Prop(_edition, _land, _rarity, serial);
+		props[id_] = Property(_edition, _land, _rarity, serial);
 	}
 
 	/** Set default royalties percentage basis point. Can be only made by admin role.

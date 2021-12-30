@@ -1,7 +1,7 @@
 // PawnStub.sol
 // SPDX-License-Identifier: MIT
 
-pragma solidity ^0.8.0;
+pragma solidity 0.8.10;
 
 import "@openzeppelin/contracts/access/AccessControl.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
@@ -20,8 +20,8 @@ contract PawnStub is ERC721Enumerable, AccessControl {
 		_setRoleAdmin(MINTER_ROLE, ADMIN_ROLE);
 	}
 
-	function tokenURI(uint256 _id) public view override returns (string memory) {
-		return "https://server.com/pawn/";
+	function tokenURI(uint256 _id) public pure override returns (string memory) {
+		return string(abi.encodePacked("https://server.com/pawn/", _id));
 	}
 
 	function mint(address _to) external onlyRole(MINTER_ROLE) returns (uint256 id_) {

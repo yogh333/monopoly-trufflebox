@@ -1,68 +1,60 @@
 Paris = require("../client/src/data/Paris.json");
 
-const MonopolyPawn = artifacts.require("MonopolyPawn");
-const MonopolyMono = artifacts.require("MonopolyMono");
-const MonopolyBoard = artifacts.require("MonopolyBoard");
-const MonopolyProp = artifacts.require("MonopolyProp");
-const MonopolyBuild = artifacts.require("MonopolyBuild");
-const MonopolyBank = artifacts.require("MonopolyBank");
+const Pawn = artifacts.require("PawnContract");
+const Mono = artifacts.require("MonoContract");
+const Board = artifacts.require("BoardContract");
+const Prop = artifacts.require("PropContract");
+const Build = artifacts.require("BuildContract");
+const Bank = artifacts.require("BankContract");
 
 module.exports = async function (deployer, network, accounts) {
-  await deployer.deploy(MonopolyMono, web3.utils.toWei("15000", "ether"));
-  const MonopolyMonoInstance = await MonopolyMono.deployed();
+  await deployer.deploy(Mono, web3.utils.toWei("15000", "ether"));
+  const MonoInstance = await Mono.deployed();
 
   await deployer.deploy(
-    MonopolyPawn,
-    "Monopoly World Pawns",
+    Pawn,
+    "MNP World Pawns",
     "MWPa",
     "http://token-cdn-uri/"
   );
-  const MonopolyPawnInstance = await MonopolyPawn.deployed();
+  const PawnInstance = await Pawn.deployed();
 
-  await deployer.deploy(MonopolyBoard, MonopolyPawnInstance.address);
-  const MonopolyBoardInstance = await MonopolyBoard.deployed();
+  await deployer.deploy(Board, PawnInstance.address);
+  const BoardInstance = await Board.deployed();
 
   await deployer.deploy(
-    MonopolyProp,
-    MonopolyBoardInstance.address,
-    "Monopoly World Properties",
+    Prop,
+    BoardInstance.address,
+    "MNP World Properties",
     "MWP",
     "http://token-cdn-uri/"
   );
 
-  await deployer.deploy(
-    MonopolyBuild,
-    MonopolyBoardInstance.address,
-    "http://token-cdn-uri/"
-  );
+  await deployer.deploy(Build, BoardInstance.address, "http://token-cdn-uri/");
 
-  const MonopolyPropInstance = await MonopolyProp.deployed();
-  const MonopolyBuildInstance = await MonopolyBuild.deployed();
+  const PropInstance = await Prop.deployed();
+  const BuildInstance = await Build.deployed();
 
   await deployer.deploy(
-    MonopolyBank,
-    MonopolyPawnInstance.address,
-    MonopolyBoardInstance.address,
-    MonopolyPropInstance.address,
-    MonopolyBuildInstance.address,
-    MonopolyMonoInstance.address
+    Bank,
+    PawnInstance.address,
+    BoardInstance.address,
+    PropInstance.address,
+    BuildInstance.address,
+    MonoInstance.address
   );
 
-  const MonopolyBankInstance = await MonopolyBank.deployed();
+  const BankInstance = await Bank.deployed();
 
   // Setup roles
   // Bank mint Prop & Build
-  const MINTER_ROLE = await MonopolyPropInstance.MINTER_ROLE();
-  await MonopolyPropInstance.grantRole(
-    MINTER_ROLE,
-    MonopolyBankInstance.address,
-    { from: accounts[0] }
-  );
-  await MonopolyBuildInstance.grantRole(
-    MINTER_ROLE,
-    MonopolyBankInstance.address,
-    { from: accounts[0] }
-  );
+  const MINTER_ROLE = await PropInstance.MINTER_ROLE();
+  await PropInstance.grantRole(MINTER_ROLE, BankInstance.address, {
+    from: accounts[0],
+  });
+  await BuildInstance.grantRole(MINTER_ROLE, BankInstance.address, {
+    from: accounts[0],
+  });
 
   // initialize Paris board prices
   let commonLandPrices = [];
@@ -79,7 +71,7 @@ module.exports = async function (deployer, network, accounts) {
     }
   });
 
-  await MonopolyBankInstance.setPrices(
+  await BankInstance.setPrices(
     Paris.id,
     Paris.maxLands,
     Paris.maxLandRarities,
@@ -92,19 +84,16 @@ module.exports = async function (deployer, network, accounts) {
 
   const amount = web3.utils.toWei("1000", "ether");
 
-  await MonopolyMonoInstance.mint(accounts[1], amount);
+  await MonoInstance.mint(accounts[1], amount);
 
   // Give allowance to contract to spend all $MONO
-  await MonopolyMonoInstance.approve(MonopolyBankInstance.address, amount, {
+  await MonoInstance.approve(BankInstance.address, amount, {
     from: accounts[1],
   });
 
   // Allow Bank contract and OpenSea's ERC721 Proxy Address
-  await MonopolyPropInstance.setIsOperatorAllowed(
-    MonopolyBankInstance.address,
-    true
-  );
-  await MonopolyPropInstance.setIsOperatorAllowed(
+  await PropInstance.setIsOperatorAllowed(BankInstance.address, true);
+  await PropInstance.setIsOperatorAllowed(
     "0x58807baD0B376efc12F5AD86aAc70E78ed67deaE",
     true
   );

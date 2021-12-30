@@ -1,7 +1,7 @@
 // BoardStub.sol
 // SPDX-License-Identifier: MIT
 
-pragma solidity ^0.8.0;
+pragma solidity 0.8.10;
 
 import "@openzeppelin/contracts/access/AccessControl.sol";
 import "./PawnStub.sol";
@@ -10,7 +10,7 @@ import "./PawnStub.sol";
 contract BoardStub is AccessControl {
 	bytes32 public constant ADMIN_ROLE = keccak256("ADMIN_ROLE");
 
-	event eNewBoard(uint16 indexed new_edition_nb);
+	event NewBoard(uint16 indexed new_edition_nb);
 
 	struct Player {
 		uint8 position;
@@ -113,7 +113,7 @@ contract BoardStub is AccessControl {
 
 		b.buildType = _buildType;
 
-		emit eNewBoard(editionMax);
+		emit NewBoard(editionMax);
 	}
 
 	function register(

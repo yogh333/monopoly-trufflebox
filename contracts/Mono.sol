@@ -1,13 +1,13 @@
-// MonopolyMono.sol
+// Mono.sol
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+pragma solidity 0.8.10;
 
 import "@openzeppelin/contracts/access/AccessControl.sol";
 import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Capped.sol";
 import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol";
 import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Pausable.sol";
 
-contract MonopolyMono is
+contract MonoContract is
     ERC20Capped,
     ERC20Burnable,
     ERC20Pausable,
@@ -21,7 +21,7 @@ contract MonopolyMono is
      * @dev Sets the value of the max supply of token. This value is immutable, it can only be
      * set once during construction.
      */
-    constructor(uint256 _cap) ERC20Capped(_cap) ERC20("MWMONO", "MONO") {
+    constructor(uint256 _cap) ERC20Capped(_cap) ERC20("Mono Token", "MONO") {
         _setupRole(ADMIN_ROLE, msg.sender);
         _setRoleAdmin(ADMIN_ROLE, ADMIN_ROLE);
         _setupRole(MINTER_ROLE, msg.sender);

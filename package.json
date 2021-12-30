@@ -1,7 +1,7 @@
 {
-  "name": "monopoly-smartcontracts",
+  "name": "mnp-smartcontracts",
   "version": "1.0.0",
-  "description": "smartcontratcs for the Monopoly platform",
+  "description": "smartcontratcs for the mnp platform",
   "main": "truffle-config.js",
   "directories": {
     "test": "test"
@@ -12,14 +12,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/jcaporossi/monopoly-smartcontracts.git"
+    "url": "git+https://github.com/jcaporossi/mnp-smartcontracts.git"
   },
   "author": "Jerome Caporossi",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/jcaporossi/monopoly-smartcontracts/issues"
+    "url": "https://github.com/jcaporossi/mnp-smartcontracts/issues"
   },
-  "homepage": "https://github.com/jcaporossi/monopoly-smartcontracts#readme",
+  "homepage": "https://github.com/jcaporossi/mnp-smartcontracts#readme",
   "dependencies": {
     "@chainlink/contracts": "0.2.2",
     "@openzeppelin/contracts": "^4.3.2",

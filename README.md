@@ -1,16 +1,16 @@
-# monopoly-trufflebox
-Monopoly World smart contracts and React-based Dapp
+# MNP-trufflebox
+MNP World smart contracts and React-based Dapp
 
 This is a React Truffle box project: for more information, please check http://trufflesuite.com/boxes/react/index.html
 
-This repository contains all the Monopoly World smart contracts (in /contracts), along with a React.js front-end (in /client).
+This repository contains all the MNP World smart contracts (in /contracts), along with a React.js front-end (in /client).
 
 ## Cloning the project
 
 In an empty local directory
 
 ```
-git clone https://github.com/jcaporossi/monopoly-trufflebox.git
+git clone https://github.com/jcaporossi/mnp-trufflebox.git
 ```
 
 ## Installation
@@ -18,7 +18,7 @@ git clone https://github.com/jcaporossi/monopoly-trufflebox.git
 After cloning the project, install dependencies with
 
 ```
-cd monopoly-trufflebox
+cd mnp-trufflebox
 npm install
 cd client
 npm install
