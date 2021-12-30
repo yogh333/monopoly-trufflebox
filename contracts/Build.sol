@@ -1,26 +1,38 @@
-// MonopolyBUILD.sol
+// Build.sol
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/access/AccessControl.sol";
 import "@openzeppelin/contracts/token/ERC1155/extensions/ERC1155Supply.sol";
 
-import "./MonopolyBoard.sol";
+import "./Board.sol";
 
-struct Build {
-	// version number
-	uint16 edition;
-	// id of the cell of Monopoly board
-	uint8 land;
-	// build type: e.g. 0 -> house, 1 -> hotel, 2 -> hotel
-	uint8 buildType;
-}
+contract BuildContract is ERC1155Supply, AccessControl {
+	struct Building {
+		// version number
+		uint16 edition;
+		// id of the cell of board
+		uint8 land;
+		// build type: e.g. 0 -> house, 1 -> hotel, 2 -> hotel
+		uint8 buildType;
+	}
 
-contract MonopolyBuild is ERC1155Supply, AccessControl {
 	bytes32 public constant ADMIN_ROLE = keccak256("ADMIN_ROLE");
 	bytes32 public constant MINTER_ROLE = keccak256("MINTER_ROLE");
 
-	MonopolyBoard private immutable board;
+	BoardContract private immutable Board;
+
+	mapping(uint256 => Building) private builds;
+	mapping(uint16 => mapping(uint8 => uint256[])) private buildIdByLandByEdition;
+
+	constructor(address BoardAddress, string memory _uri) ERC1155(_uri) {
+		_setupRole(ADMIN_ROLE, msg.sender);
+		_setRoleAdmin(ADMIN_ROLE, ADMIN_ROLE);
+		_setupRole(MINTER_ROLE, msg.sender);
+		_setRoleAdmin(MINTER_ROLE, ADMIN_ROLE);
+
+		Board = BoardContract(BoardAddress);
+	}
 
 	function isValidBuild(
 		uint16 edition,
@@ -28,22 +40,10 @@ contract MonopolyBuild is ERC1155Supply, AccessControl {
 		uint8 buildType
 	) public view returns (bool) {
 		return
-			(edition <= board.getMaxEdition()) &&
-			(land <= board.getNbLands(edition)) &&
-			(board.isBuildingLand(edition, land)) &&
-			(buildType <= board.getBuildType(edition));
-	}
-
-	mapping(uint256 => Build) private builds;
-	mapping(uint16 => mapping(uint8 => uint256[])) private buildIdByLandByEdition;
-
-	constructor(address board_address, string memory _uri) ERC1155(_uri) {
-		_setupRole(ADMIN_ROLE, msg.sender);
-		_setRoleAdmin(ADMIN_ROLE, ADMIN_ROLE);
-		_setupRole(MINTER_ROLE, msg.sender);
-		_setRoleAdmin(MINTER_ROLE, ADMIN_ROLE);
-
-		board = MonopolyBoard(board_address);
+		(edition <= Board.getMaxEdition()) &&
+		(land <= Board.getNbLands(edition)) &&
+		(Board.isBuildingLand(edition, land)) &&
+		(buildType <= Board.getBuildType(edition));
 	}
 
 	function mint(
@@ -59,7 +59,7 @@ contract MonopolyBuild is ERC1155Supply, AccessControl {
 		_mint(_to, id_, _supply, "");
 	}
 
-	function get(uint256 _id) public view returns (Build memory b_) {
+	function get(uint256 _id) public view returns (Building memory b_) {
 		require(exists(_id), "This build does not exist");
 
 		b_ = builds[_id];
@@ -86,7 +86,7 @@ contract MonopolyBuild is ERC1155Supply, AccessControl {
 
 		if (!exists(id_)) {
 			buildIdByLandByEdition[_edition][_land].push(id_);
-			builds[id_] = Build(_edition, _land, _buildType);
+			builds[id_] = Building(_edition, _land, _buildType);
 		}
 	}
 }

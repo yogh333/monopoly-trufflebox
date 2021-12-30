@@ -2,11 +2,11 @@ import { useState, useEffect } from "react";
 import { ethers } from "ethers";
 import Spinner from "react-bootstrap/Spinner";
 
-import MonoJson from "../contracts/MonopolyMono.json";
-import BankJson from "../contracts/MonopolyBank.json";
-import PropJson from "../contracts/MonopolyProp.json";
-import BoardJson from "../contracts/MonopolyBoard.json";
-import BuildJson from "../contracts/MonopolyBuild.json";
+import MonoJson from "../contracts/MonoContract.json";
+import BankJson from "../contracts/BankContract.json";
+import PropJson from "../contracts/PropContract.json";
+import BoardJson from "../contracts/BoardContract.json";
+import BuildJson from "../contracts/BuildContract.json";
 
 import "../css/User.css";
 import Button from "react-bootstrap/Button";
