@@ -1,17 +1,17 @@
-// MonopolyPROP.sol
+// Pawn.sol
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+pragma solidity 0.8.10;
 
 import "@openzeppelin/contracts/access/AccessControl.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 
-contract MonopolyPawn is ERC721Enumerable, AccessControl {
+contract PawnContract is ERC721Enumerable, AccessControl {
 	bytes32 public constant ADMIN_ROLE = keccak256("ADMIN_ROLE");
 	bytes32 public constant MINTER_ROLE = keccak256("MINTER_ROLE");
 
 	string private baseTokenURI;
 
-	struct Pawn {
+	struct PawnStruct {
 		uint8 subject; /* car, thimble, hat, ship, shoe, wheelbarrow, dog, cat */
 		uint8 background; /* blanc, noir, bleu, rouge, vert, jaune, bleu clair, violet, arc-en-ciel */
 		uint8 material; /* carton, bois, plastique, cuivre, plomb, étain, argent, palladium, platine, or */
@@ -21,7 +21,7 @@ contract MonopolyPawn is ERC721Enumerable, AccessControl {
 		uint8 xp;
 	}
 
-	mapping(uint256 => Pawn) private pawns;
+	mapping(uint256 => PawnStruct) private pawns;
 
 	constructor(
 		string memory _name,
@@ -51,7 +51,7 @@ contract MonopolyPawn is ERC721Enumerable, AccessControl {
 	function mint(address _to) external onlyRole(MINTER_ROLE) returns (uint256 id_) {
 		require(balanceOf(_to) == 0, "player already owns a pawn");
 
-		Pawn memory p;
+		PawnStruct memory p;
 		uint8 r = random(msg.sender);
 		p.subject = r % 8;
 		p.background = r % 10;
@@ -77,13 +77,13 @@ contract MonopolyPawn is ERC721Enumerable, AccessControl {
 		return super.supportsInterface(_interfaceId);
 	}
 
-	function get(uint256 _id) public view returns (Pawn memory p_) {
+	function get(uint256 _id) public view returns (PawnStruct memory p_) {
 		require(_exists(_id), "This pawn does not exist");
 
 		p_ = pawns[_id];
 	}
 
-	function generateID(Pawn memory _p) internal pure returns (uint256 id_) {
+	function generateID(PawnStruct memory _p) internal pure returns (uint256 id_) {
 		return
 			uint256(
 				keccak256(abi.encodePacked(_p.subject, _p.background, _p.material, _p.halo, _p.power, _p.level, _p.xp))

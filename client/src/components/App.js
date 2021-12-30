@@ -122,7 +122,7 @@ function App() {
       <BrowserRouter>
         <Navbar className="px-3" bg="light">
           <Container>
-            <Navbar.Brand className="brand">Monopoly World</Navbar.Brand>
+            <Navbar.Brand className="brand">MNP World</Navbar.Brand>
             <Nav className="me-auto">
               <Nav.Link href="/">Home</Nav.Link>
               {renderOthersLinks()}
@@ -179,13 +179,7 @@ function App() {
           <Route
             exact
             path="/staking"
-            element={
-							<Staker
-								p={provider}
-								n={networkId}
-								ad={address}
-							/>
-            }
+            element={<Staker p={provider} n={networkId} ad={address} />}
           />
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>

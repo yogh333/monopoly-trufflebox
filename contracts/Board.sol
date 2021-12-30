@@ -1,12 +1,12 @@
-// MonopolyPROP.sol
+// Board.sol
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+pragma solidity 0.8.10;
 
 import "@openzeppelin/contracts/access/AccessControl.sol";
 import "@chainlink/contracts/src/v0.8/VRFConsumerBase.sol";
-import "./MonopolyPawn.sol";
+import "./Pawn.sol";
 
-contract MonopolyBoard is AccessControl, VRFConsumerBase {
+contract BoardContract is AccessControl, VRFConsumerBase {
 	bytes32 public constant ADMIN_ROLE = keccak256("ADMIN_ROLE");
 	bytes32 public constant MANAGER_ROLE = keccak256("MANAGER_ROLE");
 
@@ -14,33 +14,33 @@ contract MonopolyBoard is AccessControl, VRFConsumerBase {
 	event ePawn(uint16 indexed _edition, uint256 indexed _pawnID);
 	event GenerateRandomResult(uint256 randomResult);
 
-	struct Pawn {
+	struct PawnStruct {
 		bool isOnBoard;
 		uint8 position;
 	}
 
-	struct Board {
+	struct BoardStruct {
 		uint8 nbOfLands;
 		uint8 rarityLevel;
 		mapping(uint8 => bool) isBuildingLand;
 		uint8 buildType;
-		mapping(uint256 => Pawn) pawns;
+		mapping(uint256 => PawnStruct) pawns;
 		uint16 nb_pawns_max;
 		uint16 nb_pawns;
 	}
 
 	uint16 private editionMax;
 
-	mapping(uint16 => Board) private boards;
+	mapping(uint16 => BoardStruct) private boards;
 
-	MonopolyPawn immutable pawnToken;
+	PawnContract immutable Pawn;
 
 	bytes32 internal keyHash;
 	uint256 internal fee;
 
 	uint256 public randomResult;
 
-	constructor(address pawnToken_address)
+	constructor(address PawnAddress)
 		VRFConsumerBase(
 			0x8C7382F9D8f56b33781fE506E897a4F1e2d17255, // VRF Coordinator
 			0x326C977E6efc84E512bB9C30f76E30c160eD06FB // LINK Token
@@ -49,7 +49,7 @@ contract MonopolyBoard is AccessControl, VRFConsumerBase {
 		keyHash = 0x6e75b569a01ef56d18cab6a8e71e6600d6ce853834d4a5748b720d06f878b3a4;
 		fee = 0.0001 * 10**18; // 0.1 LINK (Varies by network)
 
-		require(pawnToken_address != address(0));
+		require(PawnAddress != address(0));
 
 		_setupRole(ADMIN_ROLE, msg.sender);
 		_setRoleAdmin(ADMIN_ROLE, ADMIN_ROLE);
@@ -58,9 +58,9 @@ contract MonopolyBoard is AccessControl, VRFConsumerBase {
 
 		editionMax = 0;
 
-		pawnToken = MonopolyPawn(pawnToken_address);
+		Pawn = PawnContract(PawnAddress);
 
-		Board storage b = boards[0];
+		BoardStruct storage b = boards[0];
 		b.nbOfLands = 40;
 		b.rarityLevel = 2;
 		b.isBuildingLand[1] = true;
@@ -151,7 +151,7 @@ contract MonopolyBoard is AccessControl, VRFConsumerBase {
 		uint16 _maxPawns
 	) public onlyRole(MANAGER_ROLE) {
 		editionMax += 1;
-		Board storage b = boards[editionMax];
+		BoardStruct storage b = boards[editionMax];
 		b.nbOfLands = _nbOfLands;
 		b.rarityLevel = _rarityLevel;
 		for (uint8 i = 0; i < _buildingLands.length; i++) {

@@ -2,7 +2,7 @@
 
 Paris = require("../client/src/data/Paris.json");
 
-const Prop = artifacts.require("MonopolyProp");
+const Prop = artifacts.require("PropContract");
 const PawnStub = artifacts.require("PawnStub");
 const BoardStub = artifacts.require("BoardStub");
 
