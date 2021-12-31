@@ -6,13 +6,13 @@ import "../css/Admin.css";
 
 import Paris from "../data/Paris.json";
 
-import BankJson from "../contracts/MonopolyBank.json";
+import BankJson from "../contracts/BankContract.json";
 import Button from "react-bootstrap/Button";
 import Spinner from "react-bootstrap/Spinner";
 import Container from "react-bootstrap/Container";
-import MonoJson from "../contracts/MonopolyMono.json";
-import PropJson from "../contracts/MonopolyProp.json";
-import BuildJson from "../contracts/MonopolyBuild.json";
+import MonoJson from "../contracts/MonoContract.json";
+import PropJson from "../contracts/PropContract.json";
+import BuildJson from "../contracts/BuildContract.json";
 
 function Admin(props) {
   const spinner = <Spinner as="span" animation="border" size="sm" />;

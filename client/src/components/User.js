@@ -1,18 +1,18 @@
 import { useState, useEffect } from "react";
 import { ethers } from "ethers";
-import Spinner from "react-bootstrap/Spinner"
+import Spinner from "react-bootstrap/Spinner";
 
-import MonoJson from "../../contracts/MonopolyMono.json";
-import BankJson from "../../contracts/MonopolyBank.json";
-import PropJson from "../../contracts/MonopolyProp.json";
-import BoardJson from "../../contracts/MonopolyBoard.json";
-import BuildJson from "../contracts/MonopolyBuild.json";
+import MonoJson from "../contracts/MonoContract.json";
+import BankJson from "../contracts/BankContract.json";
+import PropJson from "../contracts/PropContract.json";
+import BoardJson from "../contracts/BoardContract.json";
+import BuildJson from "../contracts/BuildContract.json";
 
 import "../css/User.css";
 import Button from "react-bootstrap/Button";
 
 export default function User(props) {
-  const spinner = <Spinner as="span" animation="border" size="sm" />
+  const spinner = <Spinner as="span" animation="border" size="sm" />;
 
   const provider = props.provider;
   const address = props.address;
@@ -22,14 +22,12 @@ export default function User(props) {
   const [Board, setBoard] = useState(null);
   const [balance, setBalance] = useState(spinner);
   const [prop, setProp] = useState(spinner);
-  const [rollDice, setRollDice] = useState([2, 4]);
+  const [rollDice, setRollDice] = useState([1, 2]);
   const [currentPosition, setCurrentPosition] = useState(0);
-
-
 
   useEffect(() => {
     if (!(provider && address && networkId)) {
-      return
+      return;
     }
 
     const Mono = new ethers.Contract(
@@ -58,7 +56,9 @@ export default function User(props) {
 
     setBank(Bank);
     setBoard(Board);
-    Mono.balanceOf(address).then((value) => setBalance(ethers.utils.formatUnits(value)));
+    Mono.balanceOf(address).then((value) =>
+      setBalance(ethers.utils.formatUnits(value))
+    );
     Prop.balanceOf(address).then((value) => setProp(value.toNumber()));
   }, [address, provider, networkId]);
 
@@ -68,28 +68,39 @@ export default function User(props) {
    * @returns {Promise<void>}
    */
   async function rollDiceFunction() {
-    if (BoardSC == null) return;
+    if (Board == null) return;
 
-    //const getRandomNumber = await BoardSC.getRandomKeccak();
-    //console.log('getRandomNumber(): ', getRandomNumber);
+    //Generates a random number by function keccak256 of solidity
+    //pb to see
+    const Keccak256RandomNumber1 = await Board.getKeccak256RandomNumber();
+    console.log("Keccak256RandomNumber: ", Keccak256RandomNumber1);
 
-    const getRandomNumber = await BoardSC.getRandomKeccak();
-    console.log('getRandomNumber():!!!!!!!!!! ', getRandomNumber);
-    console.log('hello!');
+    const Keccak256RandomNumber2 = await Board.getKeccak256RandomNumber();
+    console.log("Keccak256RandomNumber2: ", Keccak256RandomNumber2);
+
+    console.log({ rollDice });
+
+    const total = calculateTotal(Keccak256RandomNumber1, Keccak256RandomNumber2);
+    handleNewPosition(currentPosition, total);
+    console.log("total:", { total });
+    setRollDice([Keccak256RandomNumber1, Keccak256RandomNumber2]);
+
 
     //TODO: Replace by the call at the oracle
     //Generates a random number by JS
-    const generateNewNumber = () => Math.floor(Math.random() * 6 + 1);
+    /*const generateNewNumber = () => Math.floor(Math.random() * 6 + 1);
 
     const newValue1 = generateNewNumber();
     const newValue2 = generateNewNumber();
 
-    console.log({rollDice})
+    console.log({ rollDice });
 
-    const total = calculateTotal(newValue1, newValue2)
+    const total = calculateTotal(newValue1, newValue2);
     handleNewPosition(currentPosition, total);
-    console.log('total:', {total});
+    console.log("total:", { total });
     setRollDice([newValue1, newValue2]);
+
+     */
   }
 
   /**
@@ -98,7 +109,7 @@ export default function User(props) {
    * @param previousPosition
    * @param total
    */
-  function handleNewPosition(previousPosition, total){
+  function handleNewPosition(previousPosition, total) {
     const newCell = previousPosition + total;
 
     //TODO: to define more accurately
@@ -114,7 +125,9 @@ export default function User(props) {
    * @param previousPosition
    */
   function forgetPreviousPosition(previousPosition) {
-    document.getElementById(`cell-${previousPosition}`).classList.remove("active");
+    document
+      .getElementById(`cell-${previousPosition}`)
+      .classList.remove("active");
   }
 
   /**
@@ -122,7 +135,7 @@ export default function User(props) {
    * description: highlight the cell which is the result of the sum of the dice
    * @param total
    */
-  function highlightCurrentCell(total){
+  function highlightCurrentCell(total) {
     const activeCell = document.getElementById(`cell-${total}`);
     activeCell.classList.add("active");
   }
@@ -133,10 +146,10 @@ export default function User(props) {
    * @param args
    * @returns {*}
    */
-  function calculateTotal(...args){
-    console.log({args});
+  function calculateTotal(...args) {
+    console.log({ args });
     //sum the parameters
-    return args.reduce((total, current) => total + current,0);
+    return args.reduce((total, current) => total + current, 0);
   }
 
   return (
@@ -144,35 +157,33 @@ export default function User(props) {
       <div>{balance} MONO$</div>
       <div>{prop} PROP$</div>
 
-      <Button type='submit' variant="danger" size="sm" className='btn btn-primary btn-lg btn-block'
-              onClick={rollDiceFunction}>
+      <Button
+        type="submit"
+        variant="danger"
+        size="sm"
+        className="btn btn-primary btn-lg btn-block"
+        onClick={rollDiceFunction}
+      >
         Roll the dice!
       </Button>
 
-
-
-      <div className='mt-3 ml-150'>
-
+      <div className="mt-3 ml-150">
         {/* first dice display */}
         <img
-          className='dice-display'
-          src={require(`../../../build/images/dice_face_${rollDice[0]}.png`).default}
+          className="dice-display"
+          src={require(`../assets/dice_face_${rollDice[0]}.png`).default}
           alt="dice display"
-
         />
       </div>
 
-      <div className='mt-3 ml-150'>
-
+      <div className="mt-3 ml-150">
         {/* second dice display */}
         <img
-          className='dice-display'
-          src={require(`../../../build/images/dice_face_${rollDice[1]}.png`).default}
+          className="dice-display"
+          src={require(`../assets/dice_face_${rollDice[1]}.png`).default}
           alt="dice display"
         />
-
       </div>
-
     </div>
   );
 }
