@@ -71,20 +71,18 @@ export default function User(props) {
     if (Board == null) return;
 
     //Generates a random number by function keccak256 of solidity
-    //pb to see
-    const Keccak256RandomNumber1 = await Board.getKeccak256RandomNumber();
-    console.log("Keccak256RandomNumber: ", Keccak256RandomNumber1);
-
-    const Keccak256RandomNumber2 = await Board.getKeccak256RandomNumber();
-    console.log("Keccak256RandomNumber2: ", Keccak256RandomNumber2);
-
-    console.log({ rollDice });
-
+    //pb to see the result seems to be buffered somewhere
+    const result = await Board.getRandomKeccak256();
+    const generateNewNumber = () => Math.floor(Math.random(result) * 6 + 1);
+    const number1 = generateNewNumber();
+    const number2 = generateNewNumber();
+    console.log({number1, number2});
+/*
     const total = calculateTotal(Keccak256RandomNumber1, Keccak256RandomNumber2);
     handleNewPosition(currentPosition, total);
     console.log("total:", { total });
     setRollDice([Keccak256RandomNumber1, Keccak256RandomNumber2]);
-
+*/
 
     //TODO: Replace by the call at the oracle
     //Generates a random number by JS
