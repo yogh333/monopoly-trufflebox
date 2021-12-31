@@ -9,7 +9,6 @@ import Navbar from "react-bootstrap/Navbar";
 import Admin from "./Admin";
 import Game from "./Game";
 import Home from "./Home";
-import Staker from "./Staker";
 
 import "../css/App.css";
 import { ethers } from "ethers";
@@ -179,7 +178,13 @@ function App() {
           <Route
             exact
             path="/staking"
-            element={<Staker p={provider} n={networkId} ad={address} />}
+            element={
+              <Home
+                provider={provider}
+                network_id={networkId}
+                address={address}
+              />
+            }
           />
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>
