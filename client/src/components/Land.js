@@ -3,8 +3,6 @@ import { ethers } from "ethers";
 
 import PropJson from "../contracts/PropContract.json";
 import BuildJson from "../contracts/BuildContract.json";
-import MonoJson from "../contracts/MonoContract.json";
-import BankJson from "../contracts/BankContract.json";
 
 import Button from "react-bootstrap/Button";
 import Spinner from "react-bootstrap/Spinner";
@@ -25,8 +23,6 @@ export default function Land(props) {
   const [propRareLeft, setPropRareLeft] = useState(spinner);
   const [propUncommonLeft, setPropUncommonLeft] = useState(spinner);
   const [propCommonLeft, setPropCommonLeft] = useState(spinner);
-  const [buildHouse, setBuildHouse] = useState(spinner);
-  const [buildHotel, setBuildHotel] = useState(spinner);
 
   useEffect(() => {
     if (!(provider && address && networkId && landInfo.id && editionId)) {
@@ -39,37 +35,11 @@ export default function Land(props) {
       provider
     );
 
-    const Build = new ethers.Contract(
-      BuildJson.networks[networkId].address,
-      BuildJson.abi,
-      provider.getSigner(address)
-    );
-
-    const houseId = ethers.utils.keccak256(
-      ethers.utils.defaultAbiCoder.encode(
-        ["uint16", "uint8", "uint8"],
-        [editionId, landInfo.id, 0]
-      )
-    );
-
-    const hotelId = ethers.utils.keccak256(
-      ethers.utils.defaultAbiCoder.encode(
-        ["uint16", "uint8", "uint8"],
-        [editionId, landInfo.id, 1]
-      )
-    );
-
-    Build.balanceOf(address, houseId).then((value) =>
-      setBuildHouse(value.toNumber())
-    );
-    Build.balanceOf(address, hotelId).then((value) =>
-      setBuildHotel(value.toNumber())
-    );
     Prop.balanceOf(address).then((value) => setPropBalance(value.toNumber()));
   }, [address, provider, networkId, landInfo.id, editionId]);
 
   useEffect(async () => {
-    if (!propBalance) {
+    if (propBalance === null) {
       return;
     }
 
@@ -114,15 +84,6 @@ export default function Land(props) {
     Bank.buyProp(editionId, landInfo.id, rarity).then((value) =>
       console.log("Property buy")
     );
-  };
-
-  const buyBuilding = (event) => {
-    if (!(Bank && editionId && landInfo.id)) {
-      return;
-    }
-
-    const type = event.target.getAttribute("data-type");
-    Bank.buyBuild(editionId, landInfo.id, type, 1).then();
   };
 
   if (landInfo.title === "undefined") {
@@ -174,22 +135,6 @@ export default function Land(props) {
           Buy
         </Button>{" "}
         balance: {propCommon}, {propCommonLeft} left
-      </div>
-      <div>
-        House price: {landInfo.bprices.house} MONO$
-        <br />
-        <Button variant="primary" size="sm" onClick={buyBuilding} data-type="0">
-          Buy
-        </Button>{" "}
-        balance: {buildHouse}
-      </div>
-      <div>
-        Hotel price: {landInfo.bprices.hotel} MONO$
-        <br />
-        <Button variant="primary" size="sm" onClick={buyBuilding} data-type="1">
-          Buy
-        </Button>{" "}
-        balance: {buildHotel}
       </div>
     </>
   );
