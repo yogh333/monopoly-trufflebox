@@ -22,7 +22,7 @@ export default function User(props) {
   const [Board, setBoard] = useState(null);
   const [balance, setBalance] = useState(spinner);
   const [prop, setProp] = useState(spinner);
-  const [rollDice, setRollDice] = useState([2, 4]);
+  const [rollDice, setRollDice] = useState([1, 2]);
   const [currentPosition, setCurrentPosition] = useState(0);
 
   useEffect(() => {
@@ -70,16 +70,25 @@ export default function User(props) {
   async function rollDiceFunction() {
     if (Board == null) return;
 
-    //const getRandomNumber = await BoardSC.getRandomKeccak();
-    //console.log('getRandomNumber(): ', getRandomNumber);
+    //Generates a random number by function keccak256 of solidity
+    //pb to see
+    const Keccak256RandomNumber1 = await Board.getKeccak256RandomNumber();
+    console.log("Keccak256RandomNumber: ", Keccak256RandomNumber1);
 
-    const getRandomNumber = await Board.getRandomKeccak();
-    console.log("getRandomNumber():!!!!!!!!!! ", getRandomNumber);
-    console.log("hello!");
+    const Keccak256RandomNumber2 = await Board.getKeccak256RandomNumber();
+    console.log("Keccak256RandomNumber2: ", Keccak256RandomNumber2);
+
+    console.log({ rollDice });
+
+    const total = calculateTotal(Keccak256RandomNumber1, Keccak256RandomNumber2);
+    handleNewPosition(currentPosition, total);
+    console.log("total:", { total });
+    setRollDice([Keccak256RandomNumber1, Keccak256RandomNumber2]);
+
 
     //TODO: Replace by the call at the oracle
     //Generates a random number by JS
-    const generateNewNumber = () => Math.floor(Math.random() * 6 + 1);
+    /*const generateNewNumber = () => Math.floor(Math.random() * 6 + 1);
 
     const newValue1 = generateNewNumber();
     const newValue2 = generateNewNumber();
@@ -90,6 +99,8 @@ export default function User(props) {
     handleNewPosition(currentPosition, total);
     console.log("total:", { total });
     setRollDice([newValue1, newValue2]);
+
+     */
   }
 
   /**
