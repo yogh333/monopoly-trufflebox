@@ -1,0 +1,20 @@
+{
+  "name": "monopoly-trufflebox",
+  "version": "1.0.0",
+  "description": "",
+  "main": "truffle-config.js",
+  "scripts": {
+  	"deploy":"truffle migrate --reset",
+    "start": "truffle exec scripts/liquidity_simul.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jcaporossi/monopoly-trufflebox.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jcaporossi/monopoly-trufflebox/issues"
+  },
+  "homepage": "https://github.com/jcaporossi/monopoly-trufflebox#readme"
+}
